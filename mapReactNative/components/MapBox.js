@@ -56,8 +56,8 @@ const MapBox = () => {
           mapRef.current.animateToRegion({
             latitude: locationData.coords.latitude,
             longitude: locationData.coords.longitude,
-            latitudeDelta: 0.005,
-            longitudeDelta: 0.005,
+            latitudeDelta: 0.03,
+            longitudeDelta: 0.03,
           }, 1000); // Animation duration in milliseconds (1 second)
         }
       } catch (error) {
