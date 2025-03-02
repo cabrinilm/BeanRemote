@@ -1,7 +1,7 @@
 import { View, TextInput, TouchableOpacity, StatusBar } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
-const Navbar = () => {
+const NavBar = () => {
   return (
     <View style={styles.navbar}>
    
@@ -53,4 +53,4 @@ const styles = {
   },
 };
 
-export default Navbar;
+export default NavBar;
