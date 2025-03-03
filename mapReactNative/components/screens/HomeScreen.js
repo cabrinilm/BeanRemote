@@ -1,34 +1,57 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView, Modal } from 'react-native';
 import MapBox from '../MapBox'; 
 import NavBar from '../NavBar'; 
-import Footer from '../Footer';
 import SideMenu from '../SideMenu';
-
-
+import { Ionicons } from '@expo/vector-icons'; 
 
 export default function HomeScreen({ navigation, route }) {
     const [filterVisible, setFilterVisible] = useState(false);
     const [isLoggedIn, setIsLoggedIn] = useState(route.params?.loggedIn || false);
     const [menuVisible, setMenuVisible] = useState(false);
   
-  
+    const handleLogout = () => {
+       
+        setIsLoggedIn(false);
+        navigation.navigate('Login'); 
+    };
+
     return (
       <SafeAreaView style={styles.container}>
         <NavBar
           onMenuPress={() => setMenuVisible(true)}
           onLoginPress={() => navigation.navigate('Login')}
-          isLoggedIn={isLoggedIn} // Pass login state to NavBar
+          isLoggedIn={isLoggedIn}
         />
   
         <View style={styles.mainContent}>
           <MapBox onFilterPress={() => setFilterVisible(true)} />
         </View>
 
+        
+        {isLoggedIn && (
+          <View style={styles.menuContainer}>
+            <TouchableOpacity onPress={() => navigation.navigate('Profile')} style={styles.menuItem}>
+              <Ionicons name="person-circle-outline" size={24} color="black" />
+              <Text>Profile</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => navigation.navigate('Favorites')} style={styles.menuItem}>
+              <Ionicons name="heart-outline" size={24} color="black" />
+              <Text>Favorites</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => navigation.navigate('Settings')} style={styles.menuItem}>
+              <Ionicons name="settings-outline" size={24} color="black" />
+              <Text>Settings</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={handleLogout} style={styles.menuItem}>
+              <Ionicons name="log-out-outline" size={24} color="black" />
+              <Text>Logout</Text>
+            </TouchableOpacity>
+          </View>
+        )}
 
         <SideMenu isVisible={menuVisible} onClose={() => setMenuVisible(false)} />
 
-  
         <Modal
           animationType="slide"
           transparent={true}
@@ -56,8 +79,6 @@ export default function HomeScreen({ navigation, route }) {
             </View>
           </View>
         </Modal>
-  
-        <Footer />
       </SafeAreaView>
     );
   }
@@ -71,6 +92,18 @@ export default function HomeScreen({ navigation, route }) {
       flex: 1,
       justifyContent: 'center',
       alignItems: 'center',
+    },
+    menuContainer: {
+      flexDirection: 'row',
+      justifyContent: 'space-around',
+      padding: 10,
+      backgroundColor: '#fff',
+      borderTopWidth: 1,
+      borderTopColor: '#ccc',
+    },
+    menuItem: {
+      alignItems: 'center',
+      padding: 10,
     },
     modalOverlay: {
       flex: 1,
