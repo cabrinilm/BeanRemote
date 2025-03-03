@@ -58,6 +58,12 @@ export default function LoginScreen({ navigation }) {
         onPress={() => navigation.navigate('Home')}>
         <Text style={styles.backButtonText}>Back without login</Text>
       </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles.signUpButton}
+        onPress={() => navigation.navigate('SignUpScreen')}>
+        <Text style={styles.signUpButtonText}>Create an account</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -102,5 +108,14 @@ const styles = StyleSheet.create({
   backButtonText: {
     color: '#007AFF',
     fontSize: 16,
+  },
+  signUpButton: {
+    marginTop: 20,
+    alignItems: 'center',
+  },
+  signUpButtonText: {
+    color: '#007AFF',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });

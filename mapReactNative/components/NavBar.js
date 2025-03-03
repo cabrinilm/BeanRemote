@@ -4,7 +4,13 @@ import { Ionicons } from '@expo/vector-icons';
 
 const NavBar = ({ onMenuPress, onLoginPress, isLoggedIn }) => {
   return (
+
+
+
+    
     <View style={styles.navbar}>
+
+        
       {/* Menu Icon - Shown only if logged in */}
       {isLoggedIn && (
         <TouchableOpacity onPress={onMenuPress}>

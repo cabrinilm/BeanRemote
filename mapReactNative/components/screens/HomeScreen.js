@@ -3,18 +3,20 @@ import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView, Modal } from 'r
 import MapBox from '../MapBox'; 
 import NavBar from '../NavBar'; 
 import Footer from '../Footer';
+import SideMenu from '../SideMenu';
 
 
 
 export default function HomeScreen({ navigation, route }) {
     const [filterVisible, setFilterVisible] = useState(false);
     const [isLoggedIn, setIsLoggedIn] = useState(route.params?.loggedIn || false);
+    const [menuVisible, setMenuVisible] = useState(false);
   
   
     return (
       <SafeAreaView style={styles.container}>
         <NavBar
-          onMenuPress={() => console.log('Menu opened!')}
+          onMenuPress={() => setMenuVisible(true)}
           onLoginPress={() => navigation.navigate('Login')}
           isLoggedIn={isLoggedIn} // Pass login state to NavBar
         />
@@ -22,6 +24,10 @@ export default function HomeScreen({ navigation, route }) {
         <View style={styles.mainContent}>
           <MapBox onFilterPress={() => setFilterVisible(true)} />
         </View>
+
+
+        <SideMenu isVisible={menuVisible} onClose={() => setMenuVisible(false)} />
+
   
         <Modal
           animationType="slide"
