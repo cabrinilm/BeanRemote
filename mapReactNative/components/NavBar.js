@@ -2,18 +2,20 @@ import React from 'react';
 import { View, TextInput, TouchableOpacity, StatusBar } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
-const NavBar = ({ onMenuPress, onLoginPress }) => {
+const NavBar = ({ onMenuPress, onLoginPress, isLoggedIn }) => {
   return (
     <View style={styles.navbar}>
-      {/* Menu Icon */}
-      <TouchableOpacity onPress={onMenuPress}>
-        <Ionicons name="menu" size={28} color="black" />
-      </TouchableOpacity>
+      {/* Menu Icon - Shown only if logged in */}
+      {isLoggedIn && (
+        <TouchableOpacity onPress={onMenuPress}>
+          <Ionicons name="menu" size={28} color="black" />
+        </TouchableOpacity>
+      )}
 
       {/* Search Bar */}
       <TextInput style={styles.searchBar} placeholder="Search..." />
 
-      {/* Avatar as Login Button */}
+      {/* Avatar/Login Button */}
       <TouchableOpacity onPress={onLoginPress} style={styles.avatarContainer}>
         <View style={styles.avatar}>
           <Ionicons name="person" size={20} color="#fff" />

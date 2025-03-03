@@ -17,7 +17,9 @@ export default function LoginScreen({ navigation }) {
       Alert.alert('Success', 'Login successful!', [
         {
           text: 'OK',
-          onPress: () => navigation.navigate('Home'), // Return to Home after login
+          onPress: () => {
+            navigation.navigate('Home', { loggedIn: true });
+          },
         },
       ]);
     } else {
