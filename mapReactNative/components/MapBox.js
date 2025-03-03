@@ -110,7 +110,7 @@ const MapBox = () => {
 const styles = StyleSheet.create({
   container: {
     width: "90%",
-    height: 200,
+    height: "50%",
     alignSelf: "center",
     borderRadius: 15,
     overflow: "hidden",

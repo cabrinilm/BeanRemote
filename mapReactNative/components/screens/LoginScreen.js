@@ -8,7 +8,7 @@ import {
   Alert,
 } from 'react-native';
 
-export default function LoginScreen({ navigation }) { 
+export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -17,7 +17,7 @@ export default function LoginScreen({ navigation }) {
       Alert.alert('Success', 'Login successful!', [
         {
           text: 'OK',
-          onPress: () => navigation.navigate('Main'), 
+          onPress: () => navigation.navigate('Home'), // Return to Home after login
         },
       ]);
     } else {
@@ -48,7 +48,13 @@ export default function LoginScreen({ navigation }) {
       />
 
       <TouchableOpacity style={styles.button} onPress={handleLogin}>
-        <Text style={styles.buttonText}>Login</Text>
+        <Text style={styles.buttonText}>Sign In</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles.backButton}
+        onPress={() => navigation.navigate('Home')}>
+        <Text style={styles.backButtonText}>Back without login</Text>
       </TouchableOpacity>
     </View>
   );
@@ -86,5 +92,13 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 18,
     fontWeight: 'bold',
+  },
+  backButton: {
+    marginTop: 20,
+    alignItems: 'center',
+  },
+  backButtonText: {
+    color: '#007AFF',
+    fontSize: 16,
   },
 });
