@@ -37,11 +37,11 @@ export default function HomeScreen({ navigation, route }) {
             <Ionicons name="person-circle-outline" size={24} color="black" />
             <Text>Profile</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => navigation.navigate('Favorites')} style={styles.menuItem}>
+          <TouchableOpacity onPress={() => navigation.navigate('Favorites', {username})} style={styles.menuItem}>
             <Ionicons name="heart-outline" size={24} color="black" />
             <Text>Favorites</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => navigation.navigate('Settings')} style={styles.menuItem}>
+          <TouchableOpacity onPress={() => navigation.navigate('Settings', {username})} style={styles.menuItem}>
             <Ionicons name="settings-outline" size={24} color="black" />
             <Text>Settings</Text>
           </TouchableOpacity>
