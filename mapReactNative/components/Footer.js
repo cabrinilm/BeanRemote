@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Linking } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome'; // Import icons
+import Icon from 'react-native-vector-icons/FontAwesome'; 
 
 export default function Footer() {
   const socialLinks = {
