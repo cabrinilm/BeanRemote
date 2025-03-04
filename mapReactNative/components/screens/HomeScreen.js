@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, SafeAreaView, Modal } from 'react-native'
 import MapBox from '../MapBox';
 import NavBar from '../NavBar';
 import SideMenu from '../SideMenu';
+import Footer from '../Footer';
 import { Ionicons } from '@expo/vector-icons';
 import styles from './styles/HomeScreenStyles';
 
@@ -85,6 +86,7 @@ export default function HomeScreen({ navigation, route }) {
           </View>
         </View>
       </Modal>
+      {!isLoggedIn && <Footer />}
     </SafeAreaView>
   );
 }
