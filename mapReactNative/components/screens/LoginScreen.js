@@ -14,11 +14,13 @@ export default function LoginScreen({ navigation }) {
 
   const handleLogin = () => {
     if (email && password) {
+    
       Alert.alert('Success', 'Login successful!', [
         {
           text: 'OK',
           onPress: () => {
-            navigation.navigate('Home', { loggedIn: true });
+           
+            navigation.navigate('Home', { loggedIn: true, username: email });
           },
         },
       ]);
@@ -55,13 +57,15 @@ export default function LoginScreen({ navigation }) {
 
       <TouchableOpacity
         style={styles.backButton}
-        onPress={() => navigation.navigate('Home')}>
+        onPress={() => navigation.navigate('Home', { loggedIn: false })}
+      >
         <Text style={styles.backButtonText}>Back without login</Text>
       </TouchableOpacity>
 
       <TouchableOpacity
         style={styles.signUpButton}
-        onPress={() => navigation.navigate('SignUpScreen')}>
+        onPress={() => navigation.navigate('SignUpScreen')}
+      >
         <Text style={styles.signUpButtonText}>Create an account</Text>
       </TouchableOpacity>
     </View>
@@ -72,46 +76,46 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#f5f5f5',
     padding: 20,
-    backgroundColor: '#fff',
   },
   title: {
-    fontSize: 32,
+    fontSize: 28,
     fontWeight: 'bold',
-    marginBottom: 40,
-    textAlign: 'center',
+    marginBottom: 30,
   },
   input: {
-    height: 50,
+    width: '100%',
+    padding: 15,
     borderWidth: 1,
     borderColor: '#ccc',
     borderRadius: 5,
-    paddingHorizontal: 15,
-    marginBottom: 20,
-    fontSize: 16,
+    marginBottom: 15,
+    backgroundColor: '#fff',
   },
   button: {
-    backgroundColor: '#007AFF',
+    width: '100%',
     padding: 15,
+    backgroundColor: '#007AFF',
     borderRadius: 5,
     alignItems: 'center',
+    marginBottom: 15,
   },
   buttonText: {
     color: '#fff',
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: 'bold',
   },
   backButton: {
-    marginTop: 20,
-    alignItems: 'center',
+    marginTop: 10,
   },
   backButtonText: {
     color: '#007AFF',
-    fontSize: 16,
+    fontSize: 14,
   },
   signUpButton: {
     marginTop: 20,
-    alignItems: 'center',
   },
   signUpButtonText: {
     color: '#007AFF',
