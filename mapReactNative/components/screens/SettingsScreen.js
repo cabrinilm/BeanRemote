@@ -1,19 +1,22 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import styles from './styles/SettingsScreenStyles';
+
+
 
 const SettingsScreen = ({ navigation, route }) => {
-  const username = route?.params?.username || 'Guest'; // Recebe o username do HomeScreen
+  const username = route?.params?.username || 'Guest'; 
 
   const handleLogout = () => {
     navigation.reset({
       index: 0,
       routes: [{ name: 'Login' }],
-    }); // Reseta a navegação para Login
+    }); 
   };
 
   const settingsOptions = [
-    { label: 'Edit Profile', icon: 'person-outline', onPress: () => navigation.navigate('Profile') }, // Pode levar a uma tela de edição no futuro
+    { label: 'Edit Profile', icon: 'person-outline', onPress: () => navigation.navigate('Profile') }, 
     { label: 'Notifications', icon: 'notifications-outline', onPress: () => alert('Notifications settings not implemented yet') },
     { label: 'Language', icon: 'language-outline', onPress: () => alert('Language settings not implemented yet') },
     { label: 'Privacy', icon: 'lock-closed-outline', onPress: () => alert('Privacy settings not implemented yet') },
@@ -46,45 +49,5 @@ const SettingsScreen = ({ navigation, route }) => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f5f5f5',
-  },
-  header: {
-    padding: 20,
-    backgroundColor: '#fff',
-    borderBottomWidth: 1,
-    borderBottomColor: '#ddd',
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#333',
-  },
-  settingsList: {
-    marginTop: 10,
-  },
-  settingItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 15,
-    paddingHorizontal: 20,
-    backgroundColor: '#fff',
-  },
-  icon: {
-    marginRight: 15,
-  },
-  settingLabel: {
-    flex: 1,
-    fontSize: 16,
-    color: '#333',
-  },
-  separator: {
-    height: 1,
-    backgroundColor: '#ddd',
-    marginHorizontal: 20,
-  },
-});
 
 export default SettingsScreen;

@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView, Modal } from 'react-native';
+import { View, Text, TouchableOpacity, SafeAreaView, Modal } from 'react-native';
 import MapBox from '../MapBox';
 import NavBar from '../NavBar';
 import SideMenu from '../SideMenu';
 import { Ionicons } from '@expo/vector-icons';
+import styles from './styles/HomeScreenStyles';
 
 export default function HomeScreen({ navigation, route }) {
   const [filterVisible, setFilterVisible] = useState(false);
@@ -13,7 +14,10 @@ export default function HomeScreen({ navigation, route }) {
 
   const handleLogout = () => {
     setIsLoggedIn(false);
-    navigation.navigate('Login');
+    navigation.reset({
+      index: 0,
+      routes: [{ name: 'Login' }],
+    });
   };
 
   return (
@@ -85,54 +89,3 @@ export default function HomeScreen({ navigation, route }) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f5f5f5',
-  },
-  mainContent: {
-    flex: 1,
-  },
-  menuContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    paddingVertical: 10,
-    backgroundColor: '#fff',
-    borderTopWidth: 1,
-    borderTopColor: '#ddd',
-  },
-  menuItem: {
-    alignItems: 'center',
-  },
-  modalOverlay: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  modalContent: {
-    width: '80%',
-    backgroundColor: '#fff',
-    padding: 20,
-    borderRadius: 10,
-  },
-  modalTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 10,
-  },
-  filterOption: {
-    paddingVertical: 10,
-  },
-  closeButton: {
-    marginTop: 20,
-    padding: 10,
-    backgroundColor: '#007AFF',
-    borderRadius: 5,
-    alignItems: 'center',
-  },
-  closeButtonText: {
-    color: '#fff',
-    fontWeight: 'bold',
-  },
-});
