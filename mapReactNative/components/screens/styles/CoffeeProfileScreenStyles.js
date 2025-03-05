@@ -5,7 +5,6 @@ export default StyleSheet.create({
     flex: 1,
     backgroundColor: '#f5f5f5',
   },
-  // Header
   header: {
     alignItems: 'center',
     paddingTop: 20,
@@ -27,7 +26,6 @@ export default StyleSheet.create({
     color: '#333',
     textAlign: 'center',
   },
-  // About
   infoSection: {
     padding: 20,
     backgroundColor: '#fff',
@@ -64,7 +62,6 @@ export default StyleSheet.create({
     fontSize: 14,
     color: '#555',
   },
-  // IMG 
   gallerySection: {
     padding: 20,
     backgroundColor: '#fff',
@@ -87,7 +84,6 @@ export default StyleSheet.create({
     borderRadius: 10,
     marginRight: 10,
   },
-  // Comments
   commentsSection: {
     padding: 20,
     backgroundColor: '#fff',
@@ -167,9 +163,10 @@ export default StyleSheet.create({
     alignItems: 'center',
   },
   loginPrompt: {
-    fontSize: 14,
+    fontSize: 16,
     color: '#4A2C19',
     textDecorationLine: 'underline',
+    fontWeight: '600', 
   },
   errorText: {
     fontSize: 16,

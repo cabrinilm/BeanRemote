@@ -125,12 +125,10 @@ const CoffeeProfileScreen = ({ navigation }) => {
           </View>
         ) : (
           <TouchableOpacity
-            onPress={() => navigation.navigate('LoginScreen')}
+            onPress={() => navigation.navigate('Login')}
             style={styles.loginPromptContainer}
           >
-            <Text style={styles.loginPrompt}>
-              Please log in to add comments
-            </Text>
+            <Text style={styles.loginPrompt}>Please log in to add comments</Text>
           </TouchableOpacity>
         )}
       </View>
