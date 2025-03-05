@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import * as Location from 'expo-location';
 import MapView, { Marker } from 'react-native-maps';
 import Icon from 'react-native-vector-icons/Ionicons'; 
+import { useNavigation } from '@react-navigation/native';
 
 const coffeeShops = [
     {
@@ -32,6 +33,7 @@ const coffeeShops = [
     const [location, setLocation] = useState(null);
     const [errorMsg, setErrorMsg] = useState(null);
     const mapRef = useRef(null);
+    const navigation = useNavigation();
   
     useEffect(() => {
       (async () => {
@@ -86,7 +88,7 @@ const coffeeShops = [
                 latitudeDelta: 0.01,
                 longitudeDelta: 0.01,
               }}
-              showsUserLocation={true}
+              showsUserLocation={location !== null} 
               onRegionChangeComplete={(region) => console.log('Region changed:', region)}
             >
               {coffeeShops.map((shop) => (
@@ -95,6 +97,7 @@ const coffeeShops = [
                   coordinate={{ latitude: shop.latitude, longitude: shop.longitude }}
                   title={shop.name}
                   description={shop.description}
+                  onPress={() => navigation.navigate('CoffeeProfile', { shop })}
                 />
               ))}
               {location && (
@@ -153,5 +156,6 @@ const coffeeShops = [
       shadowRadius: 3,
     },
   });
-  
+
+
   export default MapBox;

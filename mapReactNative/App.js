@@ -7,6 +7,8 @@ import SignUpScreen from './components/screens/SignUpScreen';
 import ProfileScreen from './components/screens/ProfileScreen';
 import FavoritesScreen from './components/screens/FavoritesScreen';
 import SettingsScreen from './components/screens/SettingsScreen';
+import CoffeeProfileScreen from './components/screens/CoffeeProfileScreen';
+
 
 const Stack = createStackNavigator();
 
@@ -28,6 +30,7 @@ export default function App() {
         <Stack.Screen name="Profile" component={ProfileScreen} options={{ title: 'Profile' }} />
         <Stack.Screen name="Favorites" component={FavoritesScreen} options={{ title: 'Favorites' }} />
         <Stack.Screen name="Settings" component={SettingsScreen} options={{ title: 'Settings' }} />
+        <Stack.Screen name="CoffeeProfile" component={CoffeeProfileScreen} options={{ title: 'Coffee Profile' }}/>
       </Stack.Navigator>
     </NavigationContainer>
   );
