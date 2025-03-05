@@ -38,8 +38,12 @@ const coffeeShops = [
         console.log('Requesting location permission...');
         let { status } = await Location.requestForegroundPermissionsAsync();
         if (status !== 'granted') {
-          setErrorMsg('Permission to access location was denied');
           console.log('Permission denied:', status);
+        //  default location 
+        setLocation({
+          latitude: 51.5074, 
+          longitude: -0.1278, 
+        });
           return;
         }
   
