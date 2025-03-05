@@ -29,7 +29,7 @@ const coffeeShops = [
   },
 ];
 
-const MapBox = ({ onFilterPress, loggedIn, username }) => {
+const MapBox = ({ onFilterPress, loggedIn, username, favorites, toggleFavorite }) => {
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
   const mapRef = useRef(null);
@@ -98,8 +98,11 @@ const MapBox = ({ onFilterPress, loggedIn, username }) => {
                 description={shop.description}
                 onPress={() => navigation.navigate('CoffeeProfile', { 
                   shop,
-                  loggedIn: loggedIn || false, 
-                  username: username || 'Guest', 
+                  loggedIn,
+                  username,
+                  favorites,
+                  toggleFavorite,
+
                 })}
               />
             ))}

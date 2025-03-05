@@ -12,15 +12,26 @@ export default function HomeScreen({ navigation, route }) {
   const [filterVisible, setFilterVisible] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(route.params?.loggedIn || false);
   const [menuVisible, setMenuVisible] = useState(false);
+  const [favorites, setFavorites] = useState([]);
   const username = route.params?.username || 'Guest';
 
   const handleLogout = () => {
     setIsLoggedIn(false);
+    setFavorites([]);
     navigation.reset({
       index: 0,
       routes: [{ name: 'Login' }],
     });
   };
+
+  const toggleFavorite = (shop) => {
+    if (favorites.some(fav => fav.id === shop.id)) {
+      setFavorites(favorites.filter(fav => fav.id !== shop.id));
+    } else {
+      setFavorites([...favorites, shop]);
+    }
+  };
+
 
   return (
     <ImageBackground source={backgroundImg} style={styles.background}>
@@ -36,6 +47,8 @@ export default function HomeScreen({ navigation, route }) {
             onFilterPress={() => setFilterVisible(true)} 
             loggedIn={isLoggedIn} 
             username={username}   
+            favorites={favorites}
+            toggleFavorite={toggleFavorite}
           />
         </View>
 
@@ -48,7 +61,7 @@ export default function HomeScreen({ navigation, route }) {
               <Ionicons name="person-circle-outline" size={24} color="black" />
               <Text>Profile</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => navigation.navigate('Favorites', { username })} style={styles.menuItem}>
+            <TouchableOpacity onPress={() => navigation.navigate('Favorites', { username, favorites })} style={styles.menuItem}>
               <Ionicons name="heart-outline" size={24} color="black" />
               <Text>Favorites</Text>
             </TouchableOpacity>

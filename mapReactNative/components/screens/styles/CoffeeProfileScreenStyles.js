@@ -185,4 +185,9 @@ export default StyleSheet.create({
     textAlign: 'center',
     padding: 20,
   },
+  favoriteButton: {
+    position: 'absolute',
+    top: 20,
+    right: 20,
+  }
 });

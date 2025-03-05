@@ -6,7 +6,8 @@ import styles from './styles/CoffeeProfileScreenStyles';
 
 const CoffeeProfileScreen = ({ navigation }) => {
   const route = useRoute();
-  const { shop, loggedIn = false, username } = route.params || {};
+  const { shop, loggedIn = false, username, favorites = [], toggleFavorite } = route.params || {};
+  
   
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState('');
@@ -69,14 +70,24 @@ const CoffeeProfileScreen = ({ navigation }) => {
     }));
   };
 
+  const isFavorite = favorites.some(fav => fav.id === shop.id);
+
   const renderHeader = () => (
     <>
     
-      <View style={styles.header}>
+    <View style={styles.header}>
         <View style={styles.profileCircle} />
         <Text style={styles.coffeeName}>{name}</Text>
+        {loggedIn && (
+          <TouchableOpacity style={styles.favoriteButton} onPress={() => toggleFavorite(shop)}>
+            <Ionicons
+              name={isFavorite ? "heart" : "heart-outline"}
+              size={24}
+              color={isFavorite ? "#4A2C19" : "#777"}
+            />
+          </TouchableOpacity>
+        )}
       </View>
-
       <View style={styles.infoSection}>
         <Text style={styles.coffeeDescription}>{description}</Text>
         <Text style={styles.cityText}>{city}</Text>
