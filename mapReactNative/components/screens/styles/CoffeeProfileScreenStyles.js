@@ -124,6 +124,17 @@ export default StyleSheet.create({
   commentTimestamp: {
     fontSize: 12,
     color: '#999',
+    marginBottom: 5,
+  },
+  usefulButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 5,
+  },
+  usefulText: {
+    fontSize: 14,
+    color: '#777',
+    marginLeft: 5,
   },
   emptyText: {
     fontSize: 14,
@@ -166,7 +177,7 @@ export default StyleSheet.create({
     fontSize: 16,
     color: '#4A2C19',
     textDecorationLine: 'underline',
-    fontWeight: '600', 
+    fontWeight: '600',
   },
   errorText: {
     fontSize: 16,
