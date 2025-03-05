@@ -8,7 +8,6 @@ import ProfileScreen from './components/screens/ProfileScreen';
 import FavoritesScreen from './components/screens/FavoritesScreen';
 import SettingsScreen from './components/screens/SettingsScreen';
 
-
 const Stack = createStackNavigator();
 
 export default function App() {

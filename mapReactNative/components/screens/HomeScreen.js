@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, SafeAreaView, Modal } from 'react-native';
+import { View, Text, TouchableOpacity, SafeAreaView, Modal, ImageBackground } from 'react-native';
 import MapBox from '../MapBox';
 import NavBar from '../NavBar';
 import SideMenu from '../SideMenu';
 import Footer from '../Footer';
 import { Ionicons } from '@expo/vector-icons';
 import styles from './styles/HomeScreenStyles';
-
+import backgroundImg from '../../assets/coffee-beans-background.jpg'
 export default function HomeScreen({ navigation, route }) {
   const [filterVisible, setFilterVisible] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(route.params?.loggedIn || false);
@@ -22,6 +22,7 @@ export default function HomeScreen({ navigation, route }) {
   };
 
   return (
+    <ImageBackground source={backgroundImg} style={styles.background}>
     <SafeAreaView style={styles.container}>
       <NavBar
         onMenuPress={() => setMenuVisible(true)}
@@ -88,6 +89,7 @@ export default function HomeScreen({ navigation, route }) {
       </Modal>
       {!isLoggedIn && <Footer />}
     </SafeAreaView>
+    </ImageBackground>
   );
 }
 
