@@ -113,18 +113,20 @@ const coffeeShops = [
   
   const styles = StyleSheet.create({
     container: {
-      width: '90%', // Almost full width with margins
-      height: '85%', // Almost full height with space for NavBar and Footer
-      alignSelf: 'center', // Center horizontally
-      marginVertical: 20, // Space above and below
-      borderRadius: 15, // Rounded corners
-      overflow: 'hidden', // Ensures map respects border radius
-      borderWidth: 1, // Subtle border
+      width: '90%', 
+      height: '80%', 
+      alignSelf: 'center', 
+      marginTop: 90, 
+      marginBottom: 10, 
+      borderRadius: 15, 
+      overflow: 'hidden', 
+      borderWidth: 1, 
       borderColor: '#ccc',
-      position: 'relative', // For absolute positioning of the button
+      position: 'relative', 
     },
     map: {
-      ...StyleSheet.absoluteFillObject, // Fills the container
+      width: '100%', 
+      height: '100%', 
     },
     error: {
       fontSize: 16,

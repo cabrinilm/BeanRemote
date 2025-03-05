@@ -13,7 +13,7 @@ export default function SignUpScreen({ navigation }) {
     
     console.log('User signed up:', { username, email, password });
    
-     navigation.navigate('Home');
+     navigation.navigate('Login');
   };
 
   return (

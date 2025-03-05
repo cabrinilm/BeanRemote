@@ -28,7 +28,7 @@ export default function App() {
         <Stack.Screen name="SignUpScreen" component={SignUpScreen} />
         <Stack.Screen name="Profile" component={ProfileScreen} options={{ title: 'Profile' }} />
         <Stack.Screen name="Favorites" component={FavoritesScreen} options={{ title: 'Favorites' }} />
-        <Stack.Screen name="Settings" component={SettingsScreen} options={{ title: 'Configurações' }} />
+        <Stack.Screen name="Settings" component={SettingsScreen} options={{ title: 'Settings' }} />
       </Stack.Navigator>
     </NavigationContainer>
   );
