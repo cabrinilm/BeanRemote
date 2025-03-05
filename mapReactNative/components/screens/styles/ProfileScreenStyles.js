@@ -3,102 +3,95 @@ import { StyleSheet } from "react-native";
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8f8f8',
-    paddingTop: 20,
+    backgroundColor: '#fff', 
   },
   header: {
-    paddingVertical: 20,
-    backgroundColor: '#4CAF50', // cor de fundo do header
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  coffeeImage: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    borderWidth: 3,
-    borderColor: '#fff',
-    marginBottom: 10,
-  },
-  coffeeName: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: '#fff',
-    marginBottom: 5,
-  },
-  coffeeTagline: {
-    fontSize: 16,
-    color: '#fff',
-    fontStyle: 'italic',
-  },
-  contentContainer: {
-    paddingHorizontal: 20,
-    marginTop: 30,
-  },
-  sectionTitle: {
-    fontSize: 22,
-    fontWeight: '600',
-    color: '#333',
-    marginBottom: 10,
-  },
-  amenitiesContainer: {
-    marginBottom: 20,
-  },
-  amenityItem: {
-    fontSize: 18,
-    color: '#333',
-    marginBottom: 8,
-    paddingLeft: 10,
-    position: 'relative',
-  },
-  amenityIcon: {
-    position: 'absolute',
-    left: 0,
-    top: 2,
-    width: 12,
-    height: 12,
-    backgroundColor: '#4CAF50',
-    borderRadius: 6,
-  },
-  openingHoursContainer: {
-    marginBottom: 20,
-  },
-  openingHours: {
-    fontSize: 16,
-    color: '#555',
-  },
-  photosContainer: {
-    marginBottom: 20,
-  },
-  photosGrid: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
+    padding: 15,
+    alignItems: 'center',
+  },
+  profilePictureContainer: {
+    marginRight: 20,
+  },
+  profilePicture: {
+    width: 90,
+    height: 90,
+    borderRadius: 45,
+    borderWidth: 1,
+    borderColor: '#ddd',
+  },
+  userInfo: {
+    flex: 1,
+  },
+  username: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  statsContainer: {
+    flexDirection: 'row',
     justifyContent: 'space-between',
   },
-  photo: {
-    width: '48%',
-    height: 150,
-    marginBottom: 15,
-    borderRadius: 10,
-    backgroundColor: '#e0e0e0',
-  },
-  buttonContainer: {
-    marginTop: 30,
+  stat: {
     alignItems: 'center',
+  },
+  statNumber: {
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+  statLabel: {
+    fontSize: 14,
+    color: '#666',
+  },
+  bioContainer: {
+    paddingHorizontal: 15,
+    marginBottom: 15,
+  },
+  bioText: {
+    fontSize: 14,
+    color: '#333',
   },
   editButton: {
-    width: '80%',
-    paddingVertical: 12,
-    backgroundColor: '#4CAF50',
-    borderRadius: 8,
+    marginHorizontal: 15,
+    paddingVertical: 8,
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 5,
     alignItems: 'center',
-    justifyContent: 'center',
+    marginBottom: 20,
   },
   editButtonText: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: 'bold',
-    color: '#fff',
+    color: '#000',
+  },
+  postsContainer: {
+    paddingHorizontal: 5,
+  },
+  postRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 5,
+  },
+  postPlaceholder: {
+    width: '32%', 
+    height: 120,
+    backgroundColor: '#f0f0f0', 
+    borderRadius: 5,
   },
 });
 
-export default styles;
+
+
+
+
+
+
+
+
+
+
+
+
+
+ export default styles 
