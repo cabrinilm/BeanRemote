@@ -1,11 +1,13 @@
 import React from 'react';
 import { View, Text, FlatList, TouchableOpacity } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
+import { useTranslation } from 'react-i18next'; 
 import styles from './styles/FavoritesScreenStyles'; 
 
 const FavoritesScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
+  const { t } = useTranslation(); 
   const { favorites = [], username } = route.params || {};
 
   const renderFavorite = ({ item }) => (
@@ -19,12 +21,12 @@ const FavoritesScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Your Favorites</Text>
+      <Text style={styles.title}>{t('Your Favorites')}</Text>
       <FlatList
         data={favorites}
         renderItem={renderFavorite}
         keyExtractor={item => item.id.toString()}
-        ListEmptyComponent={<Text style={styles.emptyText}>No favorites yet.</Text>}
+        ListEmptyComponent={<Text style={styles.emptyText}>{t('No favorites yet.')}</Text>} 
       />
     </View>
   );

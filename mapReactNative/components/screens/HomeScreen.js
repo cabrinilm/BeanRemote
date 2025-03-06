@@ -5,6 +5,7 @@ import NavBar from '../NavBar';
 import SideMenu from '../SideMenu';
 import Footer from '../Footer';
 import { Ionicons } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';  
 import styles from './styles/HomeScreenStyles';
 import backgroundImg from '../../assets/coffee-beans-background.jpg';
 
@@ -15,6 +16,7 @@ export default function HomeScreen({ navigation, route }) {
   const [favorites, setFavorites] = useState([]);
   const username = route.params?.username || 'Guest';
 
+  const { t } = useTranslation();  
   const handleLogout = () => {
     setIsLoggedIn(false);
     setFavorites([]);
@@ -31,7 +33,6 @@ export default function HomeScreen({ navigation, route }) {
       setFavorites([...favorites, shop]);
     }
   };
-
 
   return (
     <ImageBackground source={backgroundImg} style={styles.background}>
@@ -55,23 +56,23 @@ export default function HomeScreen({ navigation, route }) {
         {isLoggedIn && (
           <View style={styles.menuContainer}>
             <TouchableOpacity
-              onPress={() => navigation.navigate('Profile', { username })} 
+              onPress={() => navigation.navigate('Profile', { username })}
               style={styles.menuItem}
             >
               <Ionicons name="person-circle-outline" size={24} color="black" />
-              <Text>Profile</Text>
+              <Text>{t('profile')}</Text> 
             </TouchableOpacity>
             <TouchableOpacity onPress={() => navigation.navigate('Favorites', { username, favorites })} style={styles.menuItem}>
               <Ionicons name="heart-outline" size={24} color="black" />
-              <Text>Favorites</Text>
+              <Text>{t('favorites')}</Text>  
             </TouchableOpacity>
             <TouchableOpacity onPress={() => navigation.navigate('Settings', { username })} style={styles.menuItem}>
               <Ionicons name="settings-outline" size={24} color="black" />
-              <Text>Settings</Text>
+              <Text>{t('settings')}</Text> 
             </TouchableOpacity>
             <TouchableOpacity onPress={handleLogout} style={styles.menuItem}>
               <Ionicons name="log-out-outline" size={24} color="black" />
-              <Text>Logout</Text>
+              <Text>{t('logout')}</Text> 
             </TouchableOpacity>
           </View>
         )}
@@ -86,21 +87,21 @@ export default function HomeScreen({ navigation, route }) {
         >
           <View style={styles.modalOverlay}>
             <View style={styles.modalContent}>
-              <Text style={styles.modalTitle}>Filter Options</Text>
+              <Text style={styles.modalTitle}>{t('filterOptions')}</Text>  
               <TouchableOpacity style={styles.filterOption}>
-                <Text>Distance: Near Me</Text>
+                <Text>{t('distanceNearMe')}</Text> 
               </TouchableOpacity>
               <TouchableOpacity style={styles.filterOption}>
-                <Text>Type: Espresso</Text>
+                <Text>{t('typeEspresso')}</Text> 
               </TouchableOpacity>
               <TouchableOpacity style={styles.filterOption}>
-                <Text>Rating: 4+ Stars</Text>
+                <Text>{t('rating4Stars')}</Text>  
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.closeButton}
                 onPress={() => setFilterVisible(false)}
               >
-                <Text style={styles.closeButtonText}>Close</Text>
+                <Text style={styles.closeButtonText}>{t('close')}</Text>  
               </TouchableOpacity>
             </View>
           </View>

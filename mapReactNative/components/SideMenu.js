@@ -32,7 +32,7 @@ export default function SideMenu({ isVisible, onClose }) {
                 <Text>Settings</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.menuItem}>
-                <Text>Logout</Text>
+                <Text>logout</Text>
               </TouchableOpacity>
 
               <TouchableOpacity style={styles.closeButton} onPress={onClose}>

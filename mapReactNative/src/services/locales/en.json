@@ -1,0 +1,19 @@
+{
+  "profile": "Profile",
+  "favorites": "Favorites",
+  "settings": "Settings",
+  "logout": "Logout",
+  "filterOptions": "Filter Options",
+  "distanceNearMe": "Distance: Near Me",
+  "typeEspresso": "Type: Espresso",
+  "rating4Stars": "Rating: 4+ Stars",
+  "close": "Close",
+  "Your Favorites": "Your Favorites",
+  "No favorites yet.": "No favorites yet.",
+  "Select Language": "Select Language",
+  "Privacy": "Privacy Settings",
+  "Change Password": "Change Password",
+  "Edit Email": "Edit Email",
+  "Allow Location Access": "Allow Location Access",
+  "Delete Account": "Delete Account"
+}

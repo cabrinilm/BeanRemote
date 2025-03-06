@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, Switch, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { getNotificationSettings, saveNotificationSettings } from '../../../src/services/notificationService';
 
 const NotificationsScreen = () => {
   const [notifications, setNotifications] = useState({
@@ -10,28 +11,35 @@ const NotificationsScreen = () => {
     cafePromotions: false,
   });
 
-  const toggleNotification = (key) => {
-    setNotifications((prev) => ({ ...prev, [key]: !prev[key] }));
+
+  useEffect(() => {
+    const loadSettings = async () => {
+      const savedSettings = await getNotificationSettings();
+      if (savedSettings) {
+        setNotifications(savedSettings);
+      }
+    };
+    loadSettings();
+  }, []);
+
+ 
+  const toggleNotification = async (key) => {
+    const updatedSettings = { ...notifications, [key]: !notifications[key] };
+    setNotifications(updatedSettings);
+    await saveNotificationSettings(updatedSettings);
   };
 
-  const enableAll = () => {
-    setNotifications({
-      reviewResponse: true,
-      usefulClick: true,
-      newCafeNearby: true,
-      friendReview: true,
-      cafePromotions: true,
-    });
+
+  const enableAll = async () => {
+    const allEnabled = Object.keys(notifications).reduce((acc, key) => ({ ...acc, [key]: true }), {});
+    setNotifications(allEnabled);
+    await saveNotificationSettings(allEnabled);
   };
 
-  const disableAll = () => {
-    setNotifications({
-      reviewResponse: false,
-      usefulClick: false,
-      newCafeNearby: false,
-      friendReview: false,
-      cafePromotions: false,
-    });
+  const disableAll = async () => {
+    const allDisabled = Object.keys(notifications).reduce((acc, key) => ({ ...acc, [key]: false }), {});
+    setNotifications(allDisabled);
+    await saveNotificationSettings(allDisabled);
   };
 
   return (
@@ -45,7 +53,6 @@ const NotificationsScreen = () => {
         </View>
       ))}
 
-     
       <View style={styles.buttonContainer}>
         <TouchableOpacity style={[styles.button, styles.enableButton]} onPress={enableAll}>
           <Text style={styles.buttonText}>Enable All</Text>
@@ -72,46 +79,14 @@ const formatLabel = (key) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-    backgroundColor: '#fff',
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 20,
-  },
-  option: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
-  },
-  buttonContainer: {
-    marginTop: 20,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  button: {
-    flex: 1,
-    padding: 12,
-    alignItems: 'center',
-    borderRadius: 8,
-  },
-  enableButton: {
-    backgroundColor: '#4CAF50',
-    marginRight: 10,
-  },
-  disableButton: {
-    backgroundColor: '#F44336',
-  },
-  buttonText: {
-    color: '#fff',
-    fontWeight: 'bold',
-  },
+  container: { flex: 1, padding: 20, backgroundColor: '#fff' },
+  title: { fontSize: 20, fontWeight: 'bold', marginBottom: 20 },
+  option: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 10, borderBottomWidth: 1, borderBottomColor: '#ccc' },
+  buttonContainer: { marginTop: 20, flexDirection: 'row', justifyContent: 'space-between' },
+  button: { flex: 1, padding: 12, alignItems: 'center', borderRadius: 8 },
+  enableButton: { backgroundColor: '#4CAF50', marginRight: 10 },
+  disableButton: { backgroundColor: '#F44336' },
+  buttonText: { color: '#fff', fontWeight: 'bold' },
 });
 
 export default NotificationsScreen;
