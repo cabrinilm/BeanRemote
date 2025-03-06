@@ -18,7 +18,7 @@ const PrivacyScreen = ({ navigation }) => {
       <TouchableOpacity 
         style={styles.option}
         onPress={() => navigation.navigate('EditEmail')}>
-        <Text style={styles.optionText}>{t('Edit Email')}</Text> 
+        <Text style={styles.optionText}>{t('Change Email')}</Text> 
       </TouchableOpacity>
 
       <TouchableOpacity 

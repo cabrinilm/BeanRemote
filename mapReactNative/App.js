@@ -17,6 +17,7 @@ import NotificationsScreen from "./components/screens/Settings/NotificationsScre
 import LanguageSelectionScreen from "./components/screens/Settings/LanguageSelectionScreen";
 import PrivacyScreen from "./components/screens/Settings/PrivacyScreen";
 import ChangePasswordScreen from "./components/screens/Settings/ChangePasswordScreen";
+import EditEmailScreen from "./components/screens/Settings/EditEmailScreen";
 
 const Stack = createStackNavigator();
 
@@ -71,6 +72,11 @@ export default function App() {
             name="ChangePassword"
             component={ChangePasswordScreen}
             options={{ title: "Change Password" }} 
+          />
+           <Stack.Screen
+            name="EditEmail"
+            component={EditEmailScreen}
+            options={{ title: "Edit Email" }} 
           />
         </Stack.Navigator>
       </NavigationContainer>
