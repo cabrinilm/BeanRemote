@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import styles from './styles/SettingsScreenStyles';
+import styles from '../styles/SettingsScreenStyles';
 
 
 
@@ -17,7 +17,7 @@ const SettingsScreen = ({ navigation, route }) => {
 
   const settingsOptions = [
     { label: 'Edit Profile', icon: 'person-outline', onPress: () => navigation.navigate('Profile') }, 
-    { label: 'Notifications', icon: 'notifications-outline', onPress: () => alert('Notifications settings not implemented yet') },
+    { label: 'Notifications', icon: 'notifications-outline', onPress: () =>  navigation.navigate('Notifications') },
     { label: 'Language', icon: 'language-outline', onPress: () => alert('Language settings not implemented yet') },
     { label: 'Privacy', icon: 'lock-closed-outline', onPress: () => alert('Privacy settings not implemented yet') },
     { label: 'Logout', icon: 'log-out-outline', onPress: handleLogout },

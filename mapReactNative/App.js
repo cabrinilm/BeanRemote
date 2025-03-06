@@ -6,8 +6,9 @@ import LoginScreen from './components/screens/LoginScreen';
 import SignUpScreen from './components/screens/SignUpScreen';
 import ProfileScreen from './components/screens/ProfileScreen';
 import FavoritesScreen from './components/screens/FavoritesScreen';
-import SettingsScreen from './components/screens/SettingsScreen';
+import SettingsScreen from './components/screens/Settings/SettingsScreen';
 import CoffeeProfileScreen from './components/screens/CoffeeProfileScreen';
+import NotificationsScreen from './components/screens/Settings/NotificationsScreen';
 
 
 const Stack = createStackNavigator();
@@ -31,6 +32,7 @@ export default function App() {
         <Stack.Screen name="Favorites" component={FavoritesScreen} options={{ title: 'Favorites' }} />
         <Stack.Screen name="Settings" component={SettingsScreen} options={{ title: 'Settings' }} />
         <Stack.Screen name="CoffeeProfile" component={CoffeeProfileScreen} options={{ title: 'Coffee Profile' }}/>
+        <Stack.Screen name="Notifications" component={NotificationsScreen} options={{title: 'Notifications'}} />
       </Stack.Navigator>
     </NavigationContainer>
   );
