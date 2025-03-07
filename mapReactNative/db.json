@@ -1,0 +1,25 @@
+{
+    "cafes": [
+      {
+        "id": 1,
+        "name": "Central Coffee",
+        "description": "Great artisan coffee!",
+        "latitude": 51.5145,
+        "longitude": -0.1420
+      },
+      {
+        "id": 2,
+        "name": "Corner Café",
+        "description": "Specialty coffee beans available.",
+        "latitude": 51.5079,
+        "longitude": -0.1283
+      },
+      {
+        "id": 3,
+        "name": "Bistro Coffee",
+        "description": "Cozy atmosphere with free Wi-Fi.",
+        "latitude": 51.5100,
+        "longitude": -0.1345
+      }
+    ]
+  }
