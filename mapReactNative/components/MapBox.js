@@ -7,22 +7,6 @@ import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import debounce from 'lodash.debounce';
 
-// simulate the backend
-const getDistance = (lat1, lon1, lat2, lon2) => {
-  const R = 6371e3; 
-  const φ1 = (lat1 * Math.PI) / 180;
-  const φ2 = (lat2 * Math.PI) / 180;
-  const Δφ = ((lat2 - lat1) * Math.PI) / 180;
-  const Δλ = ((lon2 - lon1) * Math.PI) / 180;
-
-  const a =
-    Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
-    Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-
-  return R * c; 
-};
-
 const MapBox = ({ onFilterPress, loggedIn, username, favorites, toggleFavorite, filterType = 'visible' }) => {
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
@@ -33,45 +17,51 @@ const MapBox = ({ onFilterPress, loggedIn, username, favorites, toggleFavorite, 
   const fetchCoffeeShops = useRef(
     debounce(async (region) => {
       try {
-       
-        const response = await axios.get('http://localhost:3001/cafes');
-        const allCafes = response.data;
-
-        let filteredCafes;
+        let response;
         if (filterType === 'radius' && location) {
-      
-          const radius = 1000;
-          filteredCafes = allCafes.filter((shop) => {
-            const distance = getDistance(
-              location.latitude,
-              location.longitude,
-              shop.latitude,
-              shop.longitude
-            );
-            return distance <= radius;
+          response = await axios.get('http://localhost:3001/api/cafes/map/radius', {
+            params: {
+              lat: location.latitude,
+              lon: location.longitude,
+              radius: 1000, 
+            },
           });
         } else {
-         
           const minLat = region.latitude - region.latitudeDelta / 2;
           const maxLat = region.latitude + region.latitudeDelta / 2;
           const minLon = region.longitude - region.longitudeDelta / 2;
           const maxLon = region.longitude + region.longitudeDelta / 2;
 
-          filteredCafes = allCafes.filter(
-            (shop) =>
-              shop.latitude >= minLat &&
-              shop.latitude <= maxLat &&
-              shop.longitude >= minLon &&
-              shop.longitude <= maxLon
-          );
+          response = await axios.get('http://localhost:3001/api/cafes/map/visible', {
+            params: { minLat, maxLat, minLon, maxLon },
+          });
         }
 
-        setCoffeeShops(filteredCafes);
+        console.log('Response status:', response.status);
+        console.log('Response data:', response.data);
+
+        if (response.data && Array.isArray(response.data.cafes)) {
+          const formattedCafes = response.data.cafes
+            .filter((cafe) => typeof cafe.latitude === 'number' && typeof cafe.longitude === 'number') 
+            .map((cafe) => ({
+              id: cafe.id,
+              name: cafe.name,
+              description: cafe.description,
+              latitude: cafe.latitude,
+              longitude: cafe.longitude,
+            }));
+          setCoffeeShops(formattedCafes);
+        } else {
+          console.warn('API did not return an array of cafes:', response.data);
+          setCoffeeShops([]);
+          setErrorMsg('Invalid data format from API');
+        }
       } catch (error) {
-        console.error('Error fetching coffee shops:', error);
-        setErrorMsg('Error loading coffee shops');
+        console.error('Error fetching coffee shops:', error.message);
+        setErrorMsg('Failed to load coffee shops');
+        setCoffeeShops([]);
       }
-    }, 500)
+    }, 300)
   ).current;
 
   useEffect(() => {
@@ -79,7 +69,7 @@ const MapBox = ({ onFilterPress, loggedIn, username, favorites, toggleFavorite, 
       console.log('Requesting location permission...');
       let { status } = await Location.requestForegroundPermissionsAsync();
       let initialRegion = {
-        latitude: 53.4808, // Manchester
+        latitude: 53.4808, // Manchester, UK
         longitude: -2.2426,
         latitudeDelta: 0.03,
         longitudeDelta: 0.03,
@@ -122,7 +112,7 @@ const MapBox = ({ onFilterPress, loggedIn, username, favorites, toggleFavorite, 
   }, [filterType]);
 
   const handleRegionChange = (region) => {
-    console.log('Region changed:', region);
+    console.log('Region changed:', region, 'FilterType:', filterType);
     if (filterType !== 'radius') {
       fetchCoffeeShops(region);
     }
@@ -140,8 +130,8 @@ const MapBox = ({ onFilterPress, loggedIn, username, favorites, toggleFavorite, 
             initialRegion={{
               latitude: 53.4808,
               longitude: -2.2426,
-              latitudeDelta: 0.01,
-              longitudeDelta: 0.01,
+              latitudeDelta: 0.03,
+              longitudeDelta: 0.03,
             }}
             showsUserLocation={location !== null}
             onRegionChangeComplete={handleRegionChange}
