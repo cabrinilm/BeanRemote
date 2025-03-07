@@ -1,25 +1,100 @@
 {
     "cafes": [
+     
       {
         "id": 1,
         "name": "Central Coffee",
         "description": "Great artisan coffee!",
-        "latitude": 51.5145,
-        "longitude": -0.1420
+        "latitude": 53.4808,
+        "longitude": -2.2426
       },
       {
         "id": 2,
         "name": "Corner Café",
         "description": "Specialty coffee beans available.",
-        "latitude": 51.5079,
-        "longitude": -0.1283
+        "latitude": 53.4820,
+        "longitude": -2.2410
       },
       {
         "id": 3,
         "name": "Bistro Coffee",
         "description": "Cozy atmosphere with free Wi-Fi.",
-        "latitude": 51.5100,
-        "longitude": -0.1345
+        "latitude": 53.4795,
+        "longitude": -2.2440
+      },
+      {
+        "id": 4,
+        "name": "Urban Brew",
+        "description": "Modern coffee shop with a view.",
+        "latitude": 53.4815,
+        "longitude": -2.2405
+      },
+      {
+        "id": 5,
+        "name": "Bean Haven",
+        "description": "Organic coffee specialists.",
+        "latitude": 53.4800,
+        "longitude": -2.2435
+      },
+  
+   
+      {
+        "id": 6,
+        "name": "Riverside Café",
+        "description": "Coffee by the river.",
+        "latitude": 53.4750,
+        "longitude": -2.2500
+      },
+      {
+        "id": 7,
+        "name": "Hilltop Brew",
+        "description": "Scenic views and great coffee.",
+        "latitude": 53.4870,
+        "longitude": -2.2350
+      },
+      {
+        "id": 8,
+        "name": "Market Coffee",
+        "description": "Located near the local market.",
+        "latitude": 53.4700,
+        "longitude": -2.2300
+      },
+  
+
+      {
+        "id": 9,
+        "name": "Suburban Espresso",
+        "description": "Quiet spot for coffee lovers.",
+        "latitude": 53.4600,
+        "longitude": -2.2700
+      },
+      {
+        "id": 10,
+        "name": "Northern Roast",
+        "description": "Traditional coffee roasting.",
+        "latitude": 53.5000,
+        "longitude": -2.2100
+      },
+      {
+        "id": 11,
+        "name": "Faraway Café",
+        "description": "A bit off the beaten path.",
+        "latitude": 53.5200,
+        "longitude": -2.2800
+      },
+      {
+        "id": 12,
+        "name": "City Edge Coffee",
+        "description": "Coffee on the outskirts.",
+        "latitude": 53.4500,
+        "longitude": -2.2000
+      },
+      {
+        "id": 13,
+        "name": "Distant Brew",
+        "description": "Far but worth the trip.",
+        "latitude": 53.5400,
+        "longitude": -2.3000
       }
     ]
   }

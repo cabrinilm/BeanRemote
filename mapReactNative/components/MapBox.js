@@ -7,7 +7,23 @@ import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import debounce from 'lodash.debounce';
 
-const MapBox = ({ onFilterPress, loggedIn, username, favorites, toggleFavorite }) => {
+// simulate the backend
+const getDistance = (lat1, lon1, lat2, lon2) => {
+  const R = 6371e3; 
+  const φ1 = (lat1 * Math.PI) / 180;
+  const φ2 = (lat2 * Math.PI) / 180;
+  const Δφ = ((lat2 - lat1) * Math.PI) / 180;
+  const Δλ = ((lon2 - lon1) * Math.PI) / 180;
+
+  const a =
+    Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+    Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+  return R * c; 
+};
+
+const MapBox = ({ onFilterPress, loggedIn, username, favorites, toggleFavorite, filterType = 'visible' }) => {
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
   const [coffeeShops, setCoffeeShops] = useState([]);
@@ -17,16 +33,40 @@ const MapBox = ({ onFilterPress, loggedIn, username, favorites, toggleFavorite }
   const fetchCoffeeShops = useRef(
     debounce(async (region) => {
       try {
-        const minLat = region.latitude - region.latitudeDelta / 2;
-        const maxLat = region.latitude + region.latitudeDelta / 2;
-        const minLon = region.longitude - region.longitudeDelta / 2;
-        const maxLon = region.longitude + region.longitudeDelta / 2;
+       
+        const response = await axios.get('http://localhost:3001/cafes');
+        const allCafes = response.data;
 
-        const response = await axios.get('http://localhost:3001/cafes', {
-          params: { minLat, maxLat, minLon, maxLon },
-        });
+        let filteredCafes;
+        if (filterType === 'radius' && location) {
+      
+          const radius = 1000;
+          filteredCafes = allCafes.filter((shop) => {
+            const distance = getDistance(
+              location.latitude,
+              location.longitude,
+              shop.latitude,
+              shop.longitude
+            );
+            return distance <= radius;
+          });
+        } else {
+         
+          const minLat = region.latitude - region.latitudeDelta / 2;
+          const maxLat = region.latitude + region.latitudeDelta / 2;
+          const minLon = region.longitude - region.longitudeDelta / 2;
+          const maxLon = region.longitude + region.longitudeDelta / 2;
 
-        setCoffeeShops(response.data);
+          filteredCafes = allCafes.filter(
+            (shop) =>
+              shop.latitude >= minLat &&
+              shop.latitude <= maxLat &&
+              shop.longitude >= minLon &&
+              shop.longitude <= maxLon
+          );
+        }
+
+        setCoffeeShops(filteredCafes);
       } catch (error) {
         console.error('Error fetching coffee shops:', error);
         setErrorMsg('Error loading coffee shops');
@@ -39,11 +79,11 @@ const MapBox = ({ onFilterPress, loggedIn, username, favorites, toggleFavorite }
       console.log('Requesting location permission...');
       let { status } = await Location.requestForegroundPermissionsAsync();
       let initialRegion = {
-        latitude: 51.5074,
-        longitude: -0.1278,
+        latitude: 53.4808, // Manchester
+        longitude: -2.2426,
         latitudeDelta: 0.03,
         longitudeDelta: 0.03,
-      };  
+      };
 
       if (status !== 'granted') {
         console.log('Permission denied:', status);
@@ -79,11 +119,13 @@ const MapBox = ({ onFilterPress, loggedIn, username, favorites, toggleFavorite }
         fetchCoffeeShops(initialRegion);
       }
     })();
-  }, []);
+  }, [filterType]);
 
   const handleRegionChange = (region) => {
     console.log('Region changed:', region);
-    fetchCoffeeShops(region);
+    if (filterType !== 'radius') {
+      fetchCoffeeShops(region);
+    }
   };
 
   return (
@@ -96,8 +138,8 @@ const MapBox = ({ onFilterPress, loggedIn, username, favorites, toggleFavorite }
             ref={mapRef}
             style={styles.map}
             initialRegion={{
-              latitude: 51.5074,
-              longitude: -0.1278,
+              latitude: 53.4808,
+              longitude: -2.2426,
               latitudeDelta: 0.01,
               longitudeDelta: 0.01,
             }}
