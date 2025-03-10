@@ -2,49 +2,83 @@ import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import * as Location from 'expo-location';
 import MapView, { Marker } from 'react-native-maps';
-import Icon from 'react-native-vector-icons/Ionicons'; 
+import Icon from 'react-native-vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native';
+import axios from 'axios';
+import debounce from 'lodash.debounce';
 
-const coffeeShops = [
-  {
-    id: 1,
-    name: "Central Coffee",
-    description: "Great artisan coffee!",
-    latitude: 51.5145,
-    longitude: -0.1420,
-  },
-  {
-    id: 2,
-    name: "Corner Café",
-    description: "Specialty coffee beans available.",
-    latitude: 51.5079,
-    longitude: -0.1283,
-  },
-  {
-    id: 3,
-    name: "Bistro Coffee",
-    description: "Cozy atmosphere with free Wi-Fi.",
-    latitude: 51.5100,
-    longitude: -0.1345,
-  },
-];
-
-const MapBox = ({ onFilterPress, loggedIn, username, favorites, toggleFavorite }) => {
+const MapBox = ({ onFilterPress, loggedIn, username, favorites, toggleFavorite, filterType = 'visible' }) => {
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
+  const [coffeeShops, setCoffeeShops] = useState([]);
   const mapRef = useRef(null);
   const navigation = useNavigation();
+
+  const fetchCoffeeShops = useRef(
+    debounce(async (region) => {
+      try {
+        let response;
+        if (filterType === 'radius' && location) {
+          response = await axios.get('http://localhost:3001/api/cafes/map/radius', {
+            params: {
+              lat: location.latitude,
+              lon: location.longitude,
+              radius: 1000, 
+            },
+          });
+        } else {
+          const minLat = region.latitude - region.latitudeDelta / 2;
+          const maxLat = region.latitude + region.latitudeDelta / 2;
+          const minLon = region.longitude - region.longitudeDelta / 2;
+          const maxLon = region.longitude + region.longitudeDelta / 2;
+
+          response = await axios.get('http://localhost:3001/api/cafes/map/visible', {
+            params: { minLat, maxLat, minLon, maxLon },
+          });
+        }
+
+        console.log('Response status:', response.status);
+        console.log('Response data:', response.data);
+
+        if (response.data && Array.isArray(response.data.cafes)) {
+          const formattedCafes = response.data.cafes
+            .filter((cafe) => typeof cafe.latitude === 'number' && typeof cafe.longitude === 'number') 
+            .map((cafe) => ({
+              id: cafe.id,
+              name: cafe.name,
+              description: cafe.description,
+              latitude: cafe.latitude,
+              longitude: cafe.longitude,
+            }));
+          setCoffeeShops(formattedCafes);
+        } else {
+          console.warn('API did not return an array of cafes:', response.data);
+          setCoffeeShops([]);
+          setErrorMsg('Invalid data format from API');
+        }
+      } catch (error) {
+        console.error('Error fetching coffee shops:', error.message);
+        setErrorMsg('Failed to load coffee shops');
+        setCoffeeShops([]);
+      }
+    }, 300)
+  ).current;
 
   useEffect(() => {
     (async () => {
       console.log('Requesting location permission...');
       let { status } = await Location.requestForegroundPermissionsAsync();
+      let initialRegion = {
+        latitude: 53.4808, // Manchester, UK
+        longitude: -2.2426,
+        latitudeDelta: 0.03,
+        longitudeDelta: 0.03,
+      };
+
       if (status !== 'granted') {
         console.log('Permission denied:', status);
-        setLocation({
-          latitude: 51.5074,
-          longitude: -0.1278,
-        });
+        setLocation(initialRegion);
+        fetchCoffeeShops(initialRegion);
         return;
       }
 
@@ -54,23 +88,35 @@ const MapBox = ({ onFilterPress, loggedIn, username, favorites, toggleFavorite }
           accuracy: Location.Accuracy.High,
           timeout: 10000,
         });
-        console.log('Location obtained:', locationData.coords);
+
+        const userLocation = {
+          latitude: locationData.coords.latitude,
+          longitude: locationData.coords.longitude,
+          latitudeDelta: 0.03,
+          longitudeDelta: 0.03,
+        };
+
         setLocation(locationData.coords);
 
         if (mapRef.current) {
-          mapRef.current.animateToRegion({
-            latitude: locationData.coords.latitude,
-            longitude: locationData.coords.longitude,
-            latitudeDelta: 0.03,
-            longitudeDelta: 0.03,
-          }, 1000);
+          mapRef.current.animateToRegion(userLocation, 1000);
         }
+
+        fetchCoffeeShops(userLocation);
       } catch (error) {
         setErrorMsg(`Error getting location: ${error.message}`);
         console.log('Error:', error);
+        fetchCoffeeShops(initialRegion);
       }
     })();
-  }, []);
+  }, [filterType]);
+
+  const handleRegionChange = (region) => {
+    console.log('Region changed:', region, 'FilterType:', filterType);
+    if (filterType !== 'radius') {
+      fetchCoffeeShops(region);
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -82,13 +128,13 @@ const MapBox = ({ onFilterPress, loggedIn, username, favorites, toggleFavorite }
             ref={mapRef}
             style={styles.map}
             initialRegion={{
-              latitude: 51.5074,
-              longitude: -0.1278,
-              latitudeDelta: 0.01,
-              longitudeDelta: 0.01,
+              latitude: 53.4808,
+              longitude: -2.2426,
+              latitudeDelta: 0.03,
+              longitudeDelta: 0.03,
             }}
             showsUserLocation={location !== null}
-            onRegionChangeComplete={(region) => console.log('Region changed:', region)}
+            onRegionChangeComplete={handleRegionChange}
           >
             {coffeeShops.map((shop) => (
               <Marker
@@ -96,14 +142,15 @@ const MapBox = ({ onFilterPress, loggedIn, username, favorites, toggleFavorite }
                 coordinate={{ latitude: shop.latitude, longitude: shop.longitude }}
                 title={shop.name}
                 description={shop.description}
-                onPress={() => navigation.navigate('CoffeeProfile', { 
-                  shop,
-                  loggedIn,
-                  username,
-                  favorites,
-                  toggleFavorite,
-
-                })}
+                onPress={() =>
+                  navigation.navigate('CoffeeProfile', {
+                    shop,
+                    loggedIn,
+                    username,
+                    favorites,
+                    toggleFavorite,
+                  })
+                }
               />
             ))}
             {location && (
