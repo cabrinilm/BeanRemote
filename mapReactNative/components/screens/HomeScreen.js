@@ -10,6 +10,10 @@ import { useTranslation } from 'react-i18next';
 import styles from './styles/HomeScreenStyles';
 import backgroundImg from '../../assets/coffee-beans-background.jpg';
 
+
+
+
+
 export default function HomeScreen({ navigation, route }) {
   const [filterVisible, setFilterVisible] = useState(false);
   const [filterType, setFilterType] = useState('visible'); 
@@ -41,6 +45,13 @@ export default function HomeScreen({ navigation, route }) {
     setFilterType(type);
     setFilterVisible(false);
   };
+
+  
+ 
+
+  
+
+
 
   return (
     <ImageBackground source={backgroundImg} style={styles.background}>
