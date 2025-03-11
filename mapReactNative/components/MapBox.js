@@ -19,7 +19,7 @@ const MapBox = ({ onFilterPress, loggedIn, username, favorites, toggleFavorite, 
       try {
         let response;
         if (filterType === 'radius' && location) {
-          response = await axios.get('http://localhost:3001/api/cafes/map/radius', {
+          response = await axios.get('https://be-bean-remote.onrender.com/api/cafes/map/radius', {
             params: {
               lat: location.latitude,
               lon: location.longitude,
@@ -32,7 +32,7 @@ const MapBox = ({ onFilterPress, loggedIn, username, favorites, toggleFavorite, 
           const minLon = region.longitude - region.longitudeDelta / 2;
           const maxLon = region.longitude + region.longitudeDelta / 2;
 
-          response = await axios.get('http://localhost:3001/api/cafes/map/visible', {
+          response = await axios.get('https://be-bean-remote.onrender.com/api/cafes/map/visible', {
             params: { minLat, maxLat, minLon, maxLon },
           });
         }
