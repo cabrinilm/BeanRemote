@@ -23,10 +23,14 @@ const NewNavBar = () => {
 
 const styles = StyleSheet.create({
   navbar: {
+    position: 'absolute',  
+    bottom: 10,           
+    left: 0,
+    right: 0,
     flexDirection: 'row',
     justifyContent: 'space-around',
     backgroundColor: '#fff',
-    paddingVertical: 15,
+    paddingVertical: 10,  
     borderTopWidth: 1,
     borderTopColor: '#ddd',
     alignItems: 'center',
@@ -35,5 +39,4 @@ const styles = StyleSheet.create({
     padding: 5,
   },
 });
-
 export default NewNavBar;

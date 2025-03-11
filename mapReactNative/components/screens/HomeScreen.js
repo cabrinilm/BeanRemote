@@ -5,12 +5,11 @@ import logo from '../../assets/logo.jpg';
 import NewNavBar from '../NewNavBar';
 import MapBox from '../MapBox'; 
 
-const HomeScreen = ({ route, navigation }) => {
+const HomeScreen = ({ navigation }) => {
   const [showMap, setShowMap] = useState(false);
   const [fadeAnim] = useState(new Animated.Value(0));
   const [overlayAnim] = useState(new Animated.Value(0));
   const scaleAnim = useRef(new Animated.Value(1)).current;
-  const [isLoggedIn, setIsLoggedIn] = useState(route.params?.loggedIn || false);
 
   useEffect(() => {
     Animated.timing(fadeAnim, {
@@ -21,18 +20,12 @@ const HomeScreen = ({ route, navigation }) => {
   }, []);
 
   const handleNearYouPress = () => {
-    if (isLoggedIn) {
-      
-      navigation.navigate('UserHomeScreen', { loggedIn: true, username: route.params?.username });
-    } else {
-      
-      Animated.timing(overlayAnim, {
-        toValue: 1,
-        duration: 300,
-        useNativeDriver: true,
-      }).start();
-      setShowMap(true);
-    }
+    Animated.timing(overlayAnim, {
+      toValue: 1,
+      duration: 300,
+      useNativeDriver: true,
+    }).start();
+    setShowMap(true);
   };
 
   const handleBackPress = () => {
@@ -64,7 +57,7 @@ const HomeScreen = ({ route, navigation }) => {
   return (
     <ImageBackground source={logo} style={styles.backgroundImage} resizeMode="cover">
       <View style={styles.container}>
-        {showMap && !isLoggedIn ? (
+        {showMap ? (
           <>
             <Animated.View style={[styles.overlay, { opacity: overlayAnim }]} />
             <View style={styles.mapContainer}>
@@ -83,11 +76,9 @@ const HomeScreen = ({ route, navigation }) => {
                 <Text style={styles.nearYouText}>Near You</Text>
               </Animated.View>
             </TouchableWithoutFeedback>
-            {!isLoggedIn && (
-              <TouchableOpacity onPress={handleLoginPress} style={styles.loginButton}>
-                <Text style={styles.loginButtonText}>Login</Text>
-              </TouchableOpacity>
-            )}
+            <TouchableOpacity onPress={handleLoginPress} style={styles.loginButton}>
+              <Text style={styles.loginButtonText}>Login</Text>
+            </TouchableOpacity>
           </Animated.View>
         )}
       </View>
@@ -98,7 +89,6 @@ const HomeScreen = ({ route, navigation }) => {
     </ImageBackground>
   );
 };
-
 const styles = StyleSheet.create({
   backgroundImage: {
     flex: 1,
@@ -106,8 +96,8 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   container: {
-    flex: 1,
-    justifyContent: 'center',
+    flex: 1, 
+    justifyContent: 'center'
   },
   initialContent: {
     alignItems: 'center',
@@ -169,7 +159,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    backgroundColor: 'rgba(255,255,255,0.9)',
+    backgroundColor: 'rgba(255,255,255,0.9)', // Fundo semi-transparente para sobrepor a imagem
     borderTopWidth: 1,
     borderTopColor: '#ddd',
     zIndex: 10,
