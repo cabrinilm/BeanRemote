@@ -1,22 +1,32 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, Switch } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TouchableOpacity, ScrollView, Switch, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
-import * as Location from 'expo-location'; // Para pedir permissão de localização
+import * as Location from 'expo-location';
 import styles from './styles/SettingsScreenStyles';
 
 const SettingsGuestScreen = ({ navigation }) => {
   const { t } = useTranslation();
   const [isLocationEnabled, setIsLocationEnabled] = useState(false);
 
+  useEffect(() => {
+    const checkPermission = async () => {
+      const { status } = await Location.getForegroundPermissionsAsync();
+      setIsLocationEnabled(status === 'granted');
+    };
+    checkPermission();
+  }, []);
+
   const toggleLocationAccess = async () => {
     if (!isLocationEnabled) {
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status === 'granted') {
         setIsLocationEnabled(true);
+      } else {
+        Alert.alert(t('Permission Denied'), t('Location access is required for better experience.'));
       }
     } else {
-      setIsLocationEnabled(false);
+      setIsLocationEnabled(false); 
     }
   };
 

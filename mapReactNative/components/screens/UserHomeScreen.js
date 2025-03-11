@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, SafeAreaView, ImageBackground } from 'react-native';
 import MapBox from '../MapBox';
-import NavBar from '../NavBar';
-import SideMenu from '../SideMenu';
 import FilterModal from '../FilterModal'; 
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
@@ -12,7 +10,6 @@ import backgroundImg from '../../assets/coffee-beans-background.jpg';
 export default function UserHomeScreen({ navigation, route }) {
   const [filterVisible, setFilterVisible] = useState(false);
   const [filterType, setFilterType] = useState('visible');
-  const [menuVisible, setMenuVisible] = useState(false);
   const [favorites, setFavorites] = useState([]);
   const username = route.params?.username || 'Guest';
 
@@ -42,11 +39,6 @@ export default function UserHomeScreen({ navigation, route }) {
   return (
     <ImageBackground source={backgroundImg} style={styles.background}>
       <SafeAreaView style={styles.container}>
-        <NavBar
-          onMenuPress={() => setMenuVisible(true)}
-          onLoginPress={() => navigation.navigate('Login')} 
-          isLoggedIn={true} 
-        />
 
         <View style={styles.mainContent}>
           <MapBox
@@ -86,8 +78,6 @@ export default function UserHomeScreen({ navigation, route }) {
             <Text>{t('logout')}</Text>
           </TouchableOpacity>
         </View>
-
-        <SideMenu isVisible={menuVisible} onClose={() => setMenuVisible(false)} />
 
         <FilterModal
           visible={filterVisible}
