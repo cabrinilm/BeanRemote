@@ -1,87 +1,32 @@
-import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../config/firebase';
-import axios from 'axios';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from './../config/firebase';
 
-
-
-const signUp = async (email, password) => {
+// Function to log in a user
+export const login = async (email, password) => {
   try {
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    const userCredential = await signInWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
     const user = userCredential.user;
-    // Additional user setup can be done here
+
+    // Retrieve Firebase authentication token
+    const idToken = await user.getIdToken(true); // Force refresh
+    console.log('✅ Retrieved Firebase ID Token:', idToken);
+
+    return { user, idToken };
   } catch (error) {
-    console.error('Error signing up:', error.message);
+    console.error('❌ Login Error:', error.message);
+    throw error;
   }
 };
 
-
-import { signInWithEmailAndPassword } from 'firebase/auth';
-  
-
-  const signIn = async (email, password) => {
-    try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      const user = userCredential.user;
-
-      // User is signed in
-    } catch (error) {
-      console.error('Error signing in:', error.message);
-    }
-  };
-   
-  export const login = async (email, password) => {
-    try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      const user = userCredential.user;
-      
-      // Retrieve Firebase ID Token
-      const idToken = await user.getIdToken();
-      
-      return { user, idToken }; // Return the authenticated user and token
-    } catch (error) {
-      console.error('Login Error:', error.message);
-      throw error;
-    }
-  };
-
-
-
-
-
- 
-
-const getIdToken = async () => {
-  try {
-    const currentUser = auth.currentUser;
-    if (currentUser) {
-      const idToken = await currentUser.getIdToken(/* forceRefresh */ true);
-      return idToken;
-    }
-  } catch (error) {
-    console.error('Error getting ID token:', error.message);
+// Function to get the current user's ID token
+export const getIdToken = async () => {
+  const user = auth.currentUser;
+  if (user) {
+    return await user.getIdToken();
   }
   return null;
-};
-
-
-
-
-
-const fetchData = async () => {
-  const idToken = await getIdToken();
-  if (!idToken) {
-    console.error('User is not authenticated');
-    return;
-  }
-
-  try {
-    const response = await axios.get('https://be-bean-remote.onrender.com/api/your-endpoint', {
-      headers: {
-        Authorization: `Bearer ${idToken}`,
-      },
-    });
-    // Handle the response data
-  } catch (error) {
-    console.error('Error fetching data:', error.message);
-  }
 };

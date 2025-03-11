@@ -1,28 +1,41 @@
 import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  Alert,
-} from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
 import styles from './styles/LoginScreenStyles';
-
-
-
+import { login } from './../../src/services/api';
+import { getUsers, getCafes } from './../../src/services/api';
 
 export default function LoginScreen({ navigation }) {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  // const [initializing, setInitializing] = useState(true);
+  // const [user, setUser] = useState();
+  const [email, setEmail] = useState('caroladmin@example.com');
+  const [password, setPassword] = useState('159753');
+  const [userData, setUserData] = useState(null);
+  const [cafesData, setCafesData] = useState(null);
+  const [error, setError] = useState(null);
 
-  const handleLogin = () => {
+  // Handle user state changes
+  // function onAuthStateChanged(user) {
+  //   setUser(user);
+  //   if (initializing) setInitializing(false);
+  // }
+
+  const handleLogin = async () => {
     if (email && password) {
-    
+      setError(null);
+      const { user, idToken } = await login(email, password);
+      setUserData({ uid: user.uid, email: user.email });
+
+      // Fetch cafes (no authentication needed)
+      const cafes = await getCafes();
+      setCafesData(cafes);
+
+      // Fetch users (requires authentication)
+      const users = await getUsers(idToken);
+      console.log('Users:', users);
       Alert.alert('Success', 'Login successful!', [
         {
           text: 'OK',
           onPress: () => {
-           
             navigation.navigate('Home', { loggedIn: true, username: email });
           },
         },
@@ -38,20 +51,20 @@ export default function LoginScreen({ navigation }) {
 
       <TextInput
         style={styles.input}
-        placeholder="Email"
+        placeholder='Email'
         value={email}
         onChangeText={setEmail}
-        keyboardType="email-address"
-        autoCapitalize="none"
+        keyboardType='email-address'
+        autoCapitalize='none'
       />
 
       <TextInput
         style={styles.input}
-        placeholder="Password"
+        placeholder='Password'
         value={password}
         onChangeText={setPassword}
         secureTextEntry
-        autoCapitalize="none"
+        autoCapitalize='none'
       />
 
       <TouchableOpacity style={styles.button} onPress={handleLogin}>
@@ -71,7 +84,26 @@ export default function LoginScreen({ navigation }) {
       >
         <Text style={styles.signUpButtonText}>Create an account</Text>
       </TouchableOpacity>
+
+      {error && <Text style={styles.error}>Error: {error}</Text>}
+
+      {userData && (
+        <View style={styles.result}>
+          <Text>User ID: {userData.uid}</Text>
+          <Text>Email: {userData.email}</Text>
+        </View>
+      )}
+
+      {cafesData && (
+        <View style={styles.result}>
+          <Text>Cafes:</Text>
+          {cafesData.map((cafe) => (
+            <Text key={cafe.id}>
+              {cafe.name} - {cafe.address}
+            </Text>
+          ))}
+        </View>
+      )}
     </View>
   );
 }
-
