@@ -6,7 +6,7 @@ import i18n from "./src/services/i18n";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // SCREEN IMPORTS
-import Home2Screen from "./components/screens/HomeScreen";
+import HomeScreen from "./components/screens/HomeScreen";
 import LoginScreen from "./components/screens/LoginScreen";
 import SignUpScreen from "./components/screens/SignUpScreen";
 import ProfileScreen from "./components/screens/ProfileScreen";
@@ -18,7 +18,7 @@ import LanguageSelectionScreen from "./components/screens/Settings/LanguageSelec
 import PrivacyScreen from "./components/screens/Settings/PrivacyScreen";
 import ChangePasswordScreen from "./components/screens/Settings/ChangePasswordScreen";
 import EditEmailScreen from "./components/screens/Settings/EditEmailScreen";
-import UserHomeScreen from "./components/screens/UserHomeScreen"; // Importe a nova tela
+import UserHomeScreen from "./components/screens/UserHomeScreen"; 
 
 const Stack = createStackNavigator();
 
@@ -29,7 +29,7 @@ export default function App() {
         <Stack.Navigator initialRouteName="Home">
           <Stack.Screen
             name="Home"
-            component={Home2Screen}
+            component={HomeScreen}
             options={{ headerShown: false }}
           />
           <Stack.Screen
