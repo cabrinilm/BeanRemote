@@ -5,11 +5,12 @@ import logo from '../../assets/logo.jpg';
 import NewNavBar from '../NewNavBar';
 import MapBox from '../MapBox'; 
 
-const Home2Screen = () => {
+const Home2Screen = ({ route, navigation }) => {
   const [showMap, setShowMap] = useState(false);
   const [fadeAnim] = useState(new Animated.Value(0));
   const [overlayAnim] = useState(new Animated.Value(0));
   const scaleAnim = useRef(new Animated.Value(1)).current;
+  const [isLoggedIn, setIsLoggedIn] = useState(route.params?.loggedIn || false);
 
   useEffect(() => {
     Animated.timing(fadeAnim, {
@@ -50,12 +51,14 @@ const Home2Screen = () => {
     }).start();
   };
 
+  const handleLoginPress = () => {
+    navigation.navigate('Login');
+  };
+
   return (
     <ImageBackground source={logo} style={styles.backgroundImage} resizeMode="cover">
       <View style={styles.container}>
-        {showMap ? (
-          <Animated.View style={[styles.overlay, { opacity: overlayAnim }]} />
-        ) : (
+        {!isLoggedIn ? (
           <Animated.View style={[styles.initialContent, { opacity: fadeAnim }]}> 
             <Text style={styles.title}>Find Your Perfect</Text>
             <Text style={styles.subtitle}>Coffee for Work</Text>
@@ -64,10 +67,11 @@ const Home2Screen = () => {
                 <Text style={styles.nearYouText}>Near You</Text>
               </Animated.View>
             </TouchableWithoutFeedback>
+            <TouchableOpacity onPress={handleLoginPress} style={styles.loginButton}>
+              <Text style={styles.loginButtonText}>Login</Text>
+            </TouchableOpacity>
           </Animated.View>
-        )}
-
-        {showMap && (
+        ) : (
           <View style={styles.mapContainer}>
             <TouchableOpacity style={styles.backButton} onPress={handleBackPress}>
               <Ionicons name="close-outline" size={28} color="#fff" />
@@ -141,14 +145,6 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     zIndex: 10,
   },
-  overlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0,0,0,0.4)',
-  },
   navbarContainer: {
     position: 'absolute',
     bottom: 0,
@@ -159,6 +155,19 @@ const styles = StyleSheet.create({
     borderTopColor: '#ddd',
     zIndex: 10,
     paddingVertical: 10,
+  },
+  loginButton: {
+    backgroundColor: '#4CAF50',
+    paddingVertical: 12,
+    paddingHorizontal: 25,
+    borderRadius: 30,
+    marginVertical: 10,
+    elevation: 2,
+  },
+  loginButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });
 
