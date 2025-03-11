@@ -6,8 +6,7 @@ import i18n from "./src/services/i18n";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // SCREEN IMPORTS
-import HomeScreen from "./components/screens/HomeScreen";
-import Home2Screen from "./components/screens/Home2Screen";
+import Home2Screen from "./components/screens/HomeScreen";
 import LoginScreen from "./components/screens/LoginScreen";
 import SignUpScreen from "./components/screens/SignUpScreen";
 import ProfileScreen from "./components/screens/ProfileScreen";
@@ -19,6 +18,7 @@ import LanguageSelectionScreen from "./components/screens/Settings/LanguageSelec
 import PrivacyScreen from "./components/screens/Settings/PrivacyScreen";
 import ChangePasswordScreen from "./components/screens/Settings/ChangePasswordScreen";
 import EditEmailScreen from "./components/screens/Settings/EditEmailScreen";
+import UserHomeScreen from "./components/screens/UserHomeScreen"; // Importe a nova tela
 
 const Stack = createStackNavigator();
 
@@ -35,6 +35,11 @@ export default function App() {
           <Stack.Screen
             name="Login"
             component={LoginScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="UserHomeScreen"
+            component={UserHomeScreen}
             options={{ headerShown: false }}
           />
           <Stack.Screen name="SignUpScreen" component={SignUpScreen} />
@@ -74,7 +79,7 @@ export default function App() {
             component={ChangePasswordScreen}
             options={{ title: "Change Password" }} 
           />
-           <Stack.Screen
+          <Stack.Screen
             name="EditEmail"
             component={EditEmailScreen}
             options={{ title: "Edit Email" }} 

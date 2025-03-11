@@ -1,15 +1,7 @@
 import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  Alert,
-} from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
+import { Ionicons } from '@expo/vector-icons'; 
 import styles from './styles/LoginScreenStyles';
-
-
-
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState('');
@@ -17,13 +9,11 @@ export default function LoginScreen({ navigation }) {
 
   const handleLogin = () => {
     if (email && password) {
-    
       Alert.alert('Success', 'Login successful!', [
         {
           text: 'OK',
           onPress: () => {
-           
-            navigation.navigate('Home', { loggedIn: true, username: email });
+            navigation.navigate('UserHomeScreen', { loggedIn: true, username: email });
           },
         },
       ]);
@@ -32,8 +22,20 @@ export default function LoginScreen({ navigation }) {
     }
   };
 
+  const handleBackPress = () => {
+    navigation.navigate('Home', { loggedIn: false });
+  };
+
   return (
     <View style={styles.container}>
+
+      <TouchableOpacity
+        style={styles.backIcon}
+        onPress={handleBackPress}
+      >
+        <Ionicons name="arrow-back-outline" size={28} color="#000" />
+      </TouchableOpacity>
+
       <Text style={styles.title}>Login</Text>
 
       <TextInput
@@ -58,11 +60,12 @@ export default function LoginScreen({ navigation }) {
         <Text style={styles.buttonText}>Sign In</Text>
       </TouchableOpacity>
 
+     
       <TouchableOpacity
-        style={styles.backButton}
-        onPress={() => navigation.navigate('Home', { loggedIn: false })}
+        style={styles.returnButton}
+        onPress={handleBackPress}
       >
-        <Text style={styles.backButtonText}>Back without login</Text>
+        <Text style={styles.returnButtonText}>Return to Home</Text>
       </TouchableOpacity>
 
       <TouchableOpacity
@@ -74,4 +77,3 @@ export default function LoginScreen({ navigation }) {
     </View>
   );
 }
-
