@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, Modal } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import styles from './screens/styles/HomeScreenStyles'; 
+import styles from './screens/styles/UserHomeScreen'; 
 
 const FilterModal = ({ visible, onClose, onFilterSelect }) => {
   const { t } = useTranslation();
