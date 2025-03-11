@@ -1,21 +1,24 @@
 import React from 'react';
 import { View, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 
 const NewNavBar = () => {
+  const navigation = useNavigation(); 
+
   return (
     <View style={styles.navbar}>
-      <TouchableOpacity style={styles.navItem}>
-        <Ionicons name="home-outline" size={24} color="#000" />
+      <TouchableOpacity>
+        <Ionicons name="home-outline" size={30} color="black" />
       </TouchableOpacity>
-      <TouchableOpacity style={styles.navItem}>
-        <Ionicons name="search-outline" size={24} color="#000" />
+      <TouchableOpacity onPress={() => navigation.navigate('InfoScreen')}>
+        <Ionicons name="information-circle-outline" size={30} color="black" />
       </TouchableOpacity>
-      <TouchableOpacity style={styles.navItem}>
-        <Ionicons name="person-outline" size={24} color="#000" />
+      <TouchableOpacity>
+        <Ionicons name="person-outline" size={30} color="black" />
       </TouchableOpacity>
-      <TouchableOpacity style={styles.navItem}>
-        <Ionicons name="settings-outline" size={24} color="#000" />
+      <TouchableOpacity>
+        <Ionicons name="settings-outline" size={30} color="black" />
       </TouchableOpacity>
     </View>
   );
@@ -23,14 +26,14 @@ const NewNavBar = () => {
 
 const styles = StyleSheet.create({
   navbar: {
-    position: 'absolute',  
-    bottom: 10,           
+    position: 'absolute',
+    bottom: 10,
     left: 0,
     right: 0,
     flexDirection: 'row',
     justifyContent: 'space-around',
     backgroundColor: '#fff',
-    paddingVertical: 10,  
+    paddingVertical: 10,
     borderTopWidth: 1,
     borderTopColor: '#ddd',
     alignItems: 'center',
@@ -39,4 +42,5 @@ const styles = StyleSheet.create({
     padding: 5,
   },
 });
+
 export default NewNavBar;

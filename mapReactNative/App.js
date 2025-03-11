@@ -19,6 +19,7 @@ import PrivacyScreen from "./components/screens/Settings/PrivacyScreen";
 import ChangePasswordScreen from "./components/screens/Settings/ChangePasswordScreen";
 import EditEmailScreen from "./components/screens/Settings/EditEmailScreen";
 import UserHomeScreen from "./components/screens/UserHomeScreen"; 
+import InfoScreen from "./components/screens/InfoScreen";
 
 const Stack = createStackNavigator();
 
@@ -84,6 +85,9 @@ export default function App() {
             component={EditEmailScreen}
             options={{ title: "Edit Email" }} 
           />
+          <Stack.Screen
+          name= "InfoScreen"
+          component={InfoScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </I18nextProvider>
