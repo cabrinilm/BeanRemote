@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, ImageBackground, StyleSheet, TextInput, TouchableOpacity, SafeAreaView } from 'react-native';
+import { View, Text, ImageBackground, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import logo from '../../assets/logo.jpg';
 import NewNavBar from '../NewNavBar';
@@ -10,8 +10,6 @@ const Home2Screen = () => {
   const [loggedIn] = useState(false); 
   const [username] = useState(''); 
 
-
-
   const handleNearYouPress = () => {
     setShowMap(true); 
   };
@@ -21,95 +19,73 @@ const Home2Screen = () => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ImageBackground
-        source={logo}
-        style={styles.backgroundImage}
-        resizeMode="cover"
-      >
-      
-        <View style={styles.mainContent}>
-    
+    <ImageBackground source={logo} style={styles.backgroundImage} resizeMode="cover">
+      <View style={styles.container}>
+        {showMap ? (
 
-          {showMap ? (
-        
-            <View style={styles.mapContainer}>
-              <TouchableOpacity style={styles.backButton} onPress={handleBackPress}>
-                <Ionicons name="close-outline" size={24} color="#fff" />
-              </TouchableOpacity>
-              <MapBox
-                onFilterPress={() => console.log('Filter pressed')} 
-                loggedIn={loggedIn}
-                username={username}
-              />
-            </View>
-          ) : (
-          
-            <View style={styles.initialContent}>
-              <View style={styles.logoContainer} />
-              <View style={styles.textContainer}>
-                <Text style={styles.title}>Find Your Perfect</Text>
-                <Text style={styles.subtitle}>Coffee for Work</Text>
-              </View>
-              <TouchableOpacity style={styles.nearYouButton} onPress={handleNearYouPress}>
-                <Text style={styles.nearYouText}>Near You</Text>
-              </TouchableOpacity>
-            </View>
-          )}
-        </View>
+          <View style={styles.mapContainer}>
+            <TouchableOpacity style={styles.backButton} onPress={handleBackPress}>
+              <Ionicons name="close-outline" size={28} color="#fff" />
+            </TouchableOpacity>
+            <MapBox onFilterPress={() => console.log('Filter pressed')} loggedIn={loggedIn} username={username} />
+          </View>
+        ) : (
+   
+          <View style={styles.initialContent}>
+            <Text style={styles.title}>Find Your Perfect</Text>
+            <Text style={styles.subtitle}>Coffee for Work</Text>
+            <TouchableOpacity style={styles.nearYouButton} onPress={handleNearYouPress}>
+              <Text style={styles.nearYouText}>Near You</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+      </View>
 
-       
-        <View style={styles.navbarContainer}>
-          <NewNavBar />
-        </View>
-      </ImageBackground>
-    </SafeAreaView>
+   
+      <View style={styles.navbarContainer}>
+        <NewNavBar />
+      </View>
+    </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
   backgroundImage: {
     flex: 1,
     width: '100%',
     height: '100%',
   },
-  mainContent: {
+  container: {
     flex: 1,
-    justifyContent: 'space-between', 
-    paddingBottom: 50, 
+    justifyContent: 'center',
   },
   initialContent: {
     alignItems: 'center',
+    justifyContent: 'center',
     flex: 1,
-    justifyContent: 'center', 
-  },
-  logoContainer: {
-    height: 120,
-  },
-  textContainer: {
-    alignItems: 'center',
-    marginTop: 20,
   },
   title: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#000',
+    color: '#fff',
   },
   subtitle: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#000',
+    color: '#fff',
+    marginBottom: 20,
   },
   nearYouButton: {
-    alignSelf: 'center',
     backgroundColor: '#4CAF50',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 20,
+    paddingVertical: 12,
+    paddingHorizontal: 25,
+    borderRadius: 30, 
     marginVertical: 10,
+    elevation: 2, 
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
   },
   nearYouText: {
     color: '#fff',
@@ -122,23 +98,23 @@ const styles = StyleSheet.create({
   },
   backButton: {
     position: 'absolute',
-    top: 10,
-    left: 10,
-    backgroundColor: '#007AFF',
+    top: 50,
+    left: 15,
+    backgroundColor: 'rgba(0,0,0,0.6)',
     padding: 10,
     borderRadius: 20,
-    zIndex: 20, 
+    zIndex: 10,
   },
   navbarContainer: {
     position: 'absolute',
     bottom: 0,
     left: 0,
     right: 0,
-    backgroundColor: '#fff',
+    backgroundColor: 'rgba(255,255,255,0.9)',
     borderTopWidth: 1,
     borderTopColor: '#ddd',
     zIndex: 10,
-    paddingVertical: 10, 
+    paddingVertical: 10,
   },
 });
 
