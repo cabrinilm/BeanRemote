@@ -2,13 +2,28 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons'; 
 import styles from './styles/LoginScreenStyles';
+import { login } from './../../src/services/auth';
+import { getUsers, getCafes } from './../../src/services/api';
 
 export default function LoginScreen({ navigation }) {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('caroladmin@example.com');
+  const [password, setPassword] = useState('159753');
+  const [userData, setUserData] = useState(null);
+  const [cafesData, setCafesData] = useState(null);
+  const [error, setError] = useState(null);
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     if (email && password) {
+      setError(null);
+      const { user, idToken } = await login(email, password);
+      setUserData({ uid: user.uid, email: user.email });
+
+      const cafes = await getCafes();
+      setCafesData(cafes);
+
+      const users = await getUsers(idToken);
+      console.log('Users:', users);
+
       Alert.alert('Success', 'Login successful!', [
         {
           text: 'OK',
@@ -28,11 +43,7 @@ export default function LoginScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-
-      <TouchableOpacity
-        style={styles.backIcon}
-        onPress={handleBackPress}
-      >
+      <TouchableOpacity style={styles.backIcon} onPress={handleBackPress}>
         <Ionicons name="arrow-back-outline" size={28} color="#000" />
       </TouchableOpacity>
 
@@ -60,21 +71,34 @@ export default function LoginScreen({ navigation }) {
         <Text style={styles.buttonText}>Sign In</Text>
       </TouchableOpacity>
 
-     
-      <TouchableOpacity
-        style={styles.returnButton}
-        onPress={handleBackPress}
-      >
+      <TouchableOpacity style={styles.returnButton} onPress={handleBackPress}>
         <Text style={styles.returnButtonText}>Return to Home</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity
-        style={styles.signUpButton}
-        onPress={() => navigation.navigate('SignUpScreen')}
-      >
+      <TouchableOpacity style={styles.signUpButton} onPress={() => navigation.navigate('SignUpScreen')}>
         <Text style={styles.signUpButtonText}>Create an account</Text>
       </TouchableOpacity>
+
+      {error && <Text style={styles.error}>Error: {error}</Text>}
+
+      {userData && (
+        <View style={styles.result}>
+          <Text>User ID: {userData.uid}</Text>
+          <Text>Email: {userData.email}</Text>
+        </View>
+      )}
+
+      {cafesData && (
+        <View style={styles.result}>
+          <Text>Cafes:</Text>
+          {cafesData.map((cafe) => (
+            <Text key={cafe.id}>
+              {cafe.name} - {cafe.address}
+            </Text>
+          ))}
+        </View>
+      )}
     </View>
   );
 }
-/// merge conflict solved
+
