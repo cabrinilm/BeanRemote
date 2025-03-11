@@ -78,27 +78,6 @@ export default function LoginScreen({ navigation }) {
       <TouchableOpacity style={styles.signUpButton} onPress={() => navigation.navigate('SignUpScreen')}>
         <Text style={styles.signUpButtonText}>Create an account</Text>
       </TouchableOpacity>
-
-      {error && <Text style={styles.error}>Error: {error}</Text>}
-
-      {userData && (
-        <View style={styles.result}>
-          <Text>User ID: {userData.uid}</Text>
-          <Text>Email: {userData.email}</Text>
-        </View>
-      )}
-
-      {cafesData && (
-        <View style={styles.result}>
-          <Text>Cafes:</Text>
-          {cafesData.map((cafe) => (
-            <Text key={cafe.id}>
-              {cafe.name} - {cafe.address}
-            </Text>
-          ))}
-        </View>
-      )}
     </View>
   );
 }
-
