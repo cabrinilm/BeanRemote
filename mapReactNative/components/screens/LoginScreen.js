@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
 import styles from './styles/LoginScreenStyles';
-import { login } from './../../src/services/api';
+import { login } from './../../src/services/auth';
 import { getUsers, getCafes } from './../../src/services/api';
 
 export default function LoginScreen({ navigation }) {
