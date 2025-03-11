@@ -17,7 +17,7 @@ const NewNavBar = () => {
       <TouchableOpacity onPress={() => navigation.navigate('Login')}>
         <Ionicons name="person-outline" size={30} color="black" />
       </TouchableOpacity>
-      <TouchableOpacity>
+      <TouchableOpacity onPress={() => navigation.navigate('SettingsGuestScreen')}>
         <Ionicons name="settings-outline" size={30} color="black" />
       </TouchableOpacity>
     </View>
