@@ -8,7 +8,7 @@ const NewNavBar = () => {
 
   return (
     <View style={styles.navbar}>
-      <TouchableOpacity>
+      <TouchableOpacity onPress={() => navigation.navigate('Home')}>
         <Ionicons name="home-outline" size={30} color="black" />
       </TouchableOpacity>
       <TouchableOpacity onPress={() => navigation.navigate('InfoScreen')}>
