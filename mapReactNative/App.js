@@ -7,6 +7,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // SCREEN IMPORTS
 import HomeScreen from "./components/screens/HomeScreen";
+import Home2Screen from "./components/screens/Home2Screen";
 import LoginScreen from "./components/screens/LoginScreen";
 import SignUpScreen from "./components/screens/SignUpScreen";
 import ProfileScreen from "./components/screens/ProfileScreen";
@@ -28,7 +29,7 @@ export default function App() {
         <Stack.Navigator initialRouteName="Home">
           <Stack.Screen
             name="Home"
-            component={HomeScreen}
+            component={Home2Screen}
             options={{ headerShown: false }}
           />
           <Stack.Screen
