@@ -9,6 +9,7 @@ import {
   Modal,
   Button,
   StyleSheet,
+  FlatList,
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import styles from './styles/ProfileScreenStyles';
@@ -41,11 +42,13 @@ const ProfileScreen = ({ route }) => {
     setVisits,
   } = useContext(UserAccount);
 
-  const [username, setUsername] = useState('');
+  const [username, setUsername] = useState(user?.full_name || 'Guest');
   const [bioText, setBioText] = useState('');
-  const [badge, setBadge] = useState('');
+  const [badge, setBadge] = useState(user?.badges[0] || 'Newbie');
   const [modalVisible, setModalVisible] = useState(false);
-  const [profilePicture, setProfilePicture] = useState('');
+  const [profilePicture, setProfilePicture] = useState(
+    user?.avatar || 'https://avatars.githubusercontent.com/u/17879520?v=4'
+  );
   const [posts, setPosts] = useState([]);
 
   const pickImage = async (setImage) => {
@@ -78,39 +81,6 @@ const ProfileScreen = ({ route }) => {
       setPosts((prevPosts) => [...prevPosts, result.assets[0].uri]);
     }
   };
-
-  useEffect(() => {
-    setLoading(true);
-    setError(null);
-    setProfilePicture(
-      user?.avatar || 'https://avatars.githubusercontent.com/u/17879520?v=4'
-    );
-    setUsername(user?.full_name || 'Guest');
-    setBadge(user?.badges[0] || 'Newbie');
-    Promise.all([
-      getUserFavourites(user?.id),
-      getUserAmenities(user?.id),
-      getUserReviews(user?.id),
-      getVisits({ user_id: user?.id }),
-    ])
-      .then(([userFavourites, userPreferences, userReviews, userVisits]) => {
-        setFavorites(userFavourites);
-        setPreferences(userPreferences);
-        setReviews(userReviews);
-        setVisits(userVisits);
-      })
-      .catch((error) => {
-        console.error('❌ Profile Error:', error);
-        setError(
-          error.response
-            ? `Status: ${error.response.status} Message: "${error.response.data.msg}"`
-            : 'An unexpected error occurred in getting the user data'
-        );
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }, []);
 
   return (
     <ScrollView style={styles.container}>
@@ -148,6 +118,30 @@ const ProfileScreen = ({ route }) => {
       <View style={styles.badgeContainer}>
         <Text style={styles.badgeText}>{badge}</Text>
       </View>
+
+      {/* Favorite Cafes List */}
+      {/* <Text style={styles.sectionTitle}>Favorite Cafés</Text>
+      <FlatList
+        data={favorites}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={({ item }) => (
+          <View style={styles.listItem}>
+            <Text>{item.name}</Text>
+          </View>
+        )}
+      /> */}
+
+      {/* Last Reviews List */}
+      {/* <Text style={styles.sectionTitle}>Last Reviews</Text>
+      <FlatList
+        data={reviews.slice(0, 3)}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={({ item }) => (
+          <View style={styles.listItem}>
+            <Text>{item.text}</Text>
+          </View>
+        )}
+      /> */}
 
       <TouchableOpacity
         style={styles.editButton}

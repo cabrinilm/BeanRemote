@@ -7,6 +7,10 @@ import {
   getUsers,
   getUserByFirebaseUid,
   getCafes,
+  getUserFavourites,
+  getUserAmenities,
+  getUserReviews,
+  getVisits,
 } from './../../src/services/api';
 import UserAccount from '../../src/context/UserAccount';
 import AnimatedLoader from 'react-native-animated-loader';
@@ -25,26 +29,40 @@ export default function LoginScreen({ navigation }) {
     setFavorites,
     preferences,
     setPreferences,
+    reviews,
+    setReviews,
+    visits,
+    setVisits,
   } = useContext(UserAccount);
   const [email, setEmail] = useState('caroladmin@example.com');
   const [password, setPassword] = useState('159753');
 
   const handleLogin = async () => {
-    try {
-      if (email && password) {
-        // setLoading(true);
-        setError(null);
-        const userFromFirebase = await login(email, password);
-        const params = { firebase_uid: userFromFirebase?.user?.uid };
-        console.log('UID: ', params.firebase_uid);
-        console.log('Token: ', userFromFirebase?.idToken);
-        getUserByFirebaseUid(params).then((userData) => {
+    if (email && password) {
+      setLoading(true);
+      setError(null);
+      const userFromFirebase = await login(email, password);
+      const params = { firebase_uid: userFromFirebase?.user?.uid };
+      console.log('UID: ', params.firebase_uid);
+      console.log('Token: ', userFromFirebase?.idToken);
+      getUserByFirebaseUid(params)
+        .then((userData) => {
+          console.log(userData);
           setUser(userData);
-          // setLoading(false);
-          console.log('userData:', userData);
-        });
-
-        if (user) {
+          console.log('User: ', user);
+          return Promise.all([
+            getUserFavourites(userData?.id),
+            getUserAmenities(userData?.id),
+            getUserReviews(userData?.id),
+            getVisits({ user_id: userData?.id }),
+          ]);
+        })
+        .then(([userFavourites, userPreferences, userReviews, userVisits]) => {
+          setFavorites(userFavourites);
+          setPreferences(userPreferences);
+          setReviews(userReviews);
+          setVisits(userVisits);
+          setLoading(false);
           Alert.alert('Success', 'Login successful!', [
             {
               text: 'OK',
@@ -56,22 +74,21 @@ export default function LoginScreen({ navigation }) {
               },
             },
           ]);
-        }
-      } else {
-        Alert.alert('Error', 'Please fill in all fields');
-      }
-    } catch (error) {
-      console.error('❌ Login Error:', error.message);
-      setError(
-        `${
-          'Status: ' +
-          err.response.status +
-          ' Message: "' +
-          err.response.data.msg
-        }` || 'An unexpected error occurred in getting the user data'
-      );
-    } finally {
-      // setLoading(false);
+        })
+        .catch((err) => {
+          console.error('❌ Login Error:', error.message);
+          setError(
+            `${
+              'Status: ' +
+              err.response.status +
+              ' Message: "' +
+              err.response.data.msg
+            }` || 'An unexpected error occurred in getting the user data'
+          );
+        })
+        .finally(() => setLoading(false));
+    } else {
+      Alert.alert('Error', 'Please fill in all fields');
     }
   };
 
@@ -90,6 +107,24 @@ export default function LoginScreen({ navigation }) {
         <Text>Doing something...</Text>
       </AnimatedLoader>
     );
+  }
+
+  if (error) {
+    Alert.alert('❌ Error', error, [
+      {
+        text: 'OK',
+        onPress: () => {
+          setError(null);
+          setFavorites('');
+          setPreferences('');
+          setReviews('');
+          setVisits('');
+          setLoading(false);
+          setUser(null);
+          navigation.navigate('HomeScreen');
+        },
+      },
+    ]);
   }
 
   return (
