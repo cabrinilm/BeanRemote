@@ -3,6 +3,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import React, { useEffect } from "react";
 import { I18nextProvider } from "react-i18next";
 import i18n from "./src/services/i18n";
+
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // SCREEN IMPORTS
@@ -19,6 +20,8 @@ import PrivacyScreen from "./components/screens/Settings/PrivacyScreen";
 import ChangePasswordScreen from "./components/screens/Settings/ChangePasswordScreen";
 import EditEmailScreen from "./components/screens/Settings/EditEmailScreen";
 import UserHomeScreen from "./components/screens/UserHomeScreen"; 
+import InfoScreen from "./components/screens/InfoScreen";
+import SettingsGuestScreen from "./components/screens/SettingsGuestScreen";
 
 const Stack = createStackNavigator();
 
@@ -84,6 +87,12 @@ export default function App() {
             component={EditEmailScreen}
             options={{ title: "Edit Email" }} 
           />
+          <Stack.Screen
+          name= "InfoScreen"
+          component={InfoScreen} />
+          <Stack.Screen
+          name= "SettingsGuestScreen"
+          component={SettingsGuestScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </I18nextProvider>

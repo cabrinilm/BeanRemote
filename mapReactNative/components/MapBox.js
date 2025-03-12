@@ -7,23 +7,48 @@ import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import debounce from 'lodash.debounce';
 
-const MapBox = ({ onFilterPress, loggedIn, username, favorites, toggleFavorite, filterType = 'visible' }) => {
-  const [location, setLocation] = useState(null);
+const MapBox = ({ 
+  onFilterPress, 
+  loggedIn, 
+  username, 
+  favorites, 
+  toggleFavorite, 
+  filterType = 'visible', 
+  onCoffeeShopsUpdate 
+}) => {
+  const [location, setLocation] = useState(null); 
   const [errorMsg, setErrorMsg] = useState(null);
   const [coffeeShops, setCoffeeShops] = useState([]);
   const mapRef = useRef(null);
   const navigation = useNavigation();
 
+  const calculateDistance = (lat1, lon1, lat2, lon2) => {
+    const R = 6371; 
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const distance = R * c;
+    return distance.toFixed(1);
+  };
+
   const fetchCoffeeShops = useRef(
     debounce(async (region) => {
       try {
         let response;
-        if (filterType === 'radius' && location) {
+        const currentLat = region.latitude;
+        const currentLon = region.longitude;
+        console.log('Fetching with region:', region);
+
+        if (filterType === 'radius') {
           response = await axios.get('https://be-bean-remote.onrender.com/api/cafes/map/radius', {
             params: {
-              lat: location.latitude,
-              lon: location.longitude,
-              radius: 1000, 
+              lat: currentLat,
+              lon: currentLon,
+              radius: 5000,
             },
           });
         } else {
@@ -42,24 +67,32 @@ const MapBox = ({ onFilterPress, loggedIn, username, favorites, toggleFavorite, 
 
         if (response.data && Array.isArray(response.data.cafes)) {
           const formattedCafes = response.data.cafes
-            .filter((cafe) => typeof cafe.latitude === 'number' && typeof cafe.longitude === 'number') 
-            .map((cafe) => ({
-              id: cafe.id,
-              name: cafe.name,
-              description: cafe.description,
-              latitude: cafe.latitude,
-              longitude: cafe.longitude,
-            }));
+            .filter((cafe) => typeof cafe.latitude === 'number' && typeof cafe.longitude === 'number')
+            .map((cafe) => {
+              const distance = calculateDistance(currentLat, currentLon, cafe.latitude, cafe.longitude) + ' km';
+              console.log(`Distance for ${cafe.name}: ${distance}`);
+              return {
+                id: cafe.id,
+                name: cafe.name,
+                description: cafe.description,
+                latitude: cafe.latitude,
+                longitude: cafe.longitude,
+                distance,
+              };
+            });
           setCoffeeShops(formattedCafes);
+          onCoffeeShopsUpdate(formattedCafes);
         } else {
           console.warn('API did not return an array of cafes:', response.data);
           setCoffeeShops([]);
+          onCoffeeShopsUpdate([]);
           setErrorMsg('Invalid data format from API');
         }
       } catch (error) {
         console.error('Error fetching coffee shops:', error.message);
         setErrorMsg('Failed to load coffee shops');
         setCoffeeShops([]);
+        onCoffeeShopsUpdate([]);
       }
     }, 300)
   ).current;
@@ -69,16 +102,19 @@ const MapBox = ({ onFilterPress, loggedIn, username, favorites, toggleFavorite, 
       console.log('Requesting location permission...');
       let { status } = await Location.requestForegroundPermissionsAsync();
       let initialRegion = {
-        latitude: 53.4808, // Manchester, UK
+        latitude: 53.4808, 
         longitude: -2.2426,
         latitudeDelta: 0.03,
         longitudeDelta: 0.03,
       };
 
       if (status !== 'granted') {
-        console.log('Permission denied:', status);
-        setLocation(initialRegion);
-        fetchCoffeeShops(initialRegion);
+        console.log('Permission denied, using fallback location');
+        setLocation(initialRegion); 
+        fetchCoffeeShops(initialRegion); 
+        if (mapRef.current) {
+          mapRef.current.animateToRegion(initialRegion, 1000);
+        }
         return;
       }
 
@@ -96,23 +132,25 @@ const MapBox = ({ onFilterPress, loggedIn, username, favorites, toggleFavorite, 
           longitudeDelta: 0.03,
         };
 
+        console.log('User location set:', userLocation);
         setLocation(locationData.coords);
-
         if (mapRef.current) {
           mapRef.current.animateToRegion(userLocation, 1000);
         }
-
         fetchCoffeeShops(userLocation);
       } catch (error) {
+        console.error('Error getting location:', error.message);
         setErrorMsg(`Error getting location: ${error.message}`);
-        console.log('Error:', error);
+        setLocation(initialRegion);
         fetchCoffeeShops(initialRegion);
+        if (mapRef.current) {
+          mapRef.current.animateToRegion(initialRegion, 1000);
+        }
       }
     })();
   }, [filterType]);
 
   const handleRegionChange = (region) => {
-    console.log('Region changed:', region, 'FilterType:', filterType);
     if (filterType !== 'radius') {
       fetchCoffeeShops(region);
     }

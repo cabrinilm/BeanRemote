@@ -84,7 +84,7 @@ const HomeScreen = ({ navigation }) => {
       </View>
 
       <View style={styles.navbarContainer}>
-        <NewNavBar />
+      <NewNavBar navigation={navigation} />
       </View>
     </ImageBackground>
   );
