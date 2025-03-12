@@ -20,8 +20,8 @@ export default function UserHomeScreen({ navigation, route }) {
     setLoading,
     isErrorPopupOpen,
     setIsErrorPopupOpen,
-    favorites, 
-    setFavorites, 
+    favorites,
+    setFavorites,
     preferences,
     setPreferences,
     reviews,
@@ -104,10 +104,6 @@ export default function UserHomeScreen({ navigation, route }) {
                 filterType={filterType}
                 onCoffeeShopsUpdate={handleCoffeeShopsUpdate}
               />
-              <TouchableOpacity style={styles.backButton} onPress={toggleMap}>
-                <Ionicons name="list-outline" size={28} color="#fff" />
-                <Text style={styles.backButtonText}>{t('backToList')}</Text>
-              </TouchableOpacity>
             </View>
           ) : (
             <View style={styles.listContainer}>
@@ -123,10 +119,6 @@ export default function UserHomeScreen({ navigation, route }) {
               ) : (
                 <Text style={styles.noCafesText}>No nearby cafés found</Text>
               )}
-              <TouchableOpacity onPress={toggleMap} style={styles.mapButton}>
-                <Ionicons name="map-outline" size={24} color="#fff" />
-                <Text style={styles.mapButtonText}>{t('viewOnMap')}</Text>
-              </TouchableOpacity>
             </View>
           )}
         </Animated.View>
@@ -134,7 +126,7 @@ export default function UserHomeScreen({ navigation, route }) {
         <Animated.View style={[styles.navBar, { transform: [{ scale: scaleAnim }] }]}>
           {[
             { icon: 'person-outline', label: t('profile'), route: 'Profile' },
-            { icon: 'heart-outline', label: t('favorites'), route: 'Favorites' },
+            { icon: showMap ? 'list-outline' : 'map-outline', label: showMap ? t('list') : t('map'), action: toggleMap }, // Substituído Favorites por Map
             { icon: 'settings-outline', label: t('settings'), route: 'Settings' },
             { icon: 'log-out-outline', label: t('logout'), action: handleLogout },
           ].map((item, index) => (

@@ -9,14 +9,13 @@ const GuestMapBox = ({ navigation }) => {
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
   const [coffeeShops, setCoffeeShops] = useState([]);
+  const [mapKey, setMapKey] = useState(0);
   const mapRef = useRef(null);
-  const [mapReady, setMapReady] = useState(false);
 
   const fetchCoffeeShops = useRef(
     debounce(async (region) => {
       try {
         console.log('GuestMapBox - Fetching with region:', region);
-
         const response = await axios.get('https://be-bean-remote.onrender.com/api/cafes/map/radius', {
           params: {
             lat: region.latitude,
@@ -41,6 +40,7 @@ const GuestMapBox = ({ navigation }) => {
 
           console.log('GuestMapBox - Setting coffee shops:', formattedCafes);
           setCoffeeShops(formattedCafes);
+          setMapKey(prev => prev + 1);
         } else {
           console.warn('GuestMapBox - No cafes found or invalid format:', response.data);
           setCoffeeShops([]);
@@ -48,7 +48,6 @@ const GuestMapBox = ({ navigation }) => {
         }
       } catch (error) {
         console.error('GuestMapBox - Error fetching coffee shops:', error.message);
-        console.error('GuestMapBox - Error details:', error.response ? error.response.data : error);
         setErrorMsg('Failed to load coffee shops');
         setCoffeeShops([]);
       }
@@ -56,69 +55,49 @@ const GuestMapBox = ({ navigation }) => {
   ).current;
 
   useEffect(() => {
-    (async () => {
-      console.log('GuestMapBox - Requesting location permission...');
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      let initialRegion = {
+    const fetchInitialData = async () => {
+      const defaultLocation = {
         latitude: 53.4808, // Manchester, UK
         longitude: -2.2426,
         latitudeDelta: 0.0922,
         longitudeDelta: 0.0421,
       };
 
-      if (status !== 'granted') {
-        console.log('GuestMapBox - Permission denied, using fallback location');
-        setLocation(initialRegion);
-        fetchCoffeeShops(initialRegion);
-        return;
-      }
-
       try {
-        console.log('GuestMapBox - Getting location...');
-        let locationData = await Location.getCurrentPositionAsync({
-          accuracy: Location.Accuracy.High,
-          timeout: 10000,
-        });
+        console.log('GuestMapBox - Requesting location permission...');
+        let { status } = await Location.requestForegroundPermissionsAsync();
 
-        const userLocation = {
-          latitude: locationData.coords.latitude,
-          longitude: locationData.coords.longitude,
-          latitudeDelta: 0.0922,
-          longitudeDelta: 0.0421,
-        };
+        if (status !== 'granted') {
+          console.log('GuestMapBox - Permission denied, using fallback location');
+          setLocation(defaultLocation);
+          await fetchCoffeeShops(defaultLocation);
+        } else {
+          console.log('GuestMapBox - Getting location...');
+          let locationData = await Location.getCurrentPositionAsync({
+            accuracy: Location.Accuracy.High,
+            timeout: 10000,
+          });
 
-        console.log('GuestMapBox - User location set:', userLocation);
-        setLocation(userLocation);
-        fetchCoffeeShops(userLocation);
+          const userLocation = {
+            latitude: locationData.coords.latitude,
+            longitude: locationData.coords.longitude,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
+          };
+
+          console.log('GuestMapBox - User location set:', userLocation);
+          setLocation(userLocation);
+          await fetchCoffeeShops(userLocation);
+        }
       } catch (error) {
-        console.error('GuestMapBox - Error getting location:', error.message);
-        setErrorMsg(`Error getting location: ${error.message}`);
-        setLocation(initialRegion);
-        fetchCoffeeShops(initialRegion);
+        console.error('GuestMapBox - Error fetching location:', error.message);
+        setLocation(defaultLocation);
+        await fetchCoffeeShops(defaultLocation);
       }
-    })();
-  }, []);
+    };
 
-  
-  useEffect(() => {
-    if (mapReady && coffeeShops.length > 0 && mapRef.current) {
-      console.log('GuestMapBox - Coffee shops updated and map ready:', coffeeShops);
-      const coordinates = coffeeShops.map((shop) => ({
-        latitude: shop.latitude,
-        longitude: shop.longitude,
-      }));
-      if (location) {
-        coordinates.push({
-          latitude: location.latitude,
-          longitude: location.longitude,
-        });
-      }
-      mapRef.current.fitToCoordinates(coordinates, {
-        edgePadding: { top: 50, right: 50, bottom: 50, left: 50 },
-        animated: true,
-      });
-    }
-  }, [coffeeShops, mapReady]);
+    fetchInitialData();
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -126,8 +105,8 @@ const GuestMapBox = ({ navigation }) => {
         <Text style={styles.error}>{errorMsg}</Text>
       ) : (
         <MapView
+          key={mapKey}
           ref={mapRef}
-          key={coffeeShops.length} 
           style={styles.map}
           initialRegion={{
             latitude: 53.4808,
@@ -135,14 +114,10 @@ const GuestMapBox = ({ navigation }) => {
             latitudeDelta: 0.0922,
             longitudeDelta: 0.0421,
           }}
+          region={location}
           showsUserLocation={!!location}
-          onMapReady={() => {
-            console.log('GuestMapBox - Map is ready');
-            setMapReady(true);
-          }}
         >
-          {console.log('GuestMapBox - Rendering coffeeShops:', coffeeShops)}
-          {coffeeShops.length > 0 && coffeeShops.map((shop) => (
+          {coffeeShops.map((shop) => (
             <Marker
               key={shop.id}
               coordinate={{
