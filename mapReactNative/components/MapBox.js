@@ -48,7 +48,7 @@ const MapBox = ({
             params: {
               lat: currentLat,
               lon: currentLon,
-              radius: 1000,
+              radius: 5000,
             },
           });
         } else {

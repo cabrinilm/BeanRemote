@@ -1,8 +1,12 @@
 import { StyleSheet } from 'react-native';
 
 export default StyleSheet.create({
-  background: { flex: 1 },
-  container: { flex: 1 },
+  background: {
+    flex: 1,
+  },
+  container: {
+    flex: 1,
+  },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -15,10 +19,12 @@ export default StyleSheet.create({
   headerText: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#fff',
+    color: '#fff', 
     fontFamily: 'Poppins',
   },
-  mapContainer: { flex: 1 },
+  mapContainer: {
+    flex: 1,
+  },
   listContainer: {
     flex: 1,
     padding: 20,
@@ -26,7 +32,7 @@ export default StyleSheet.create({
   sectionTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#fff',
+    color: '#333',
     marginBottom: 15,
   },
   cafeList: {
@@ -41,17 +47,17 @@ export default StyleSheet.create({
     borderRadius: 10,
     marginBottom: 10,
   },
-  cafeInfo: { 
+  cafeInfo: {
     flex: 1,
   },
   cafeName: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#fff',
+    color: '#000', 
   },
   cafeDetails: {
     fontSize: 14,
-    color: '#ddd',
+    color: '#444', 
   },
   favoriteButton: {
     padding: 5,
@@ -96,7 +102,9 @@ export default StyleSheet.create({
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
   },
-  navItem: { alignItems: 'center' },
+  navItem: {
+    alignItems: 'center',
+  },
   navText: {
     color: '#fff',
     fontSize: 12,
@@ -105,7 +113,7 @@ export default StyleSheet.create({
   },
   noCafesText: {
     fontSize: 16,
-    color: '#fff',
+    color: '#333', 
     textAlign: 'center',
     marginVertical: 20,
   },

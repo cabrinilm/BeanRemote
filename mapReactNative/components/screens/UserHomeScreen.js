@@ -103,21 +103,16 @@ export default function UserHomeScreen({ navigation, route }) {
   return (
     <ImageBackground source={backgroundImg} style={styles.background} imageStyle={{ opacity: 0.7 }}>
       <SafeAreaView style={styles.container}>
-        {/* Header */}
+       
         <View style={styles.header}>
-          <Text style={styles.headerText}>Olá, {username}!</Text>
-          <TouchableOpacity onPress={() => setFilterVisible(true)}>
-            <Ionicons name="filter" size={28} color="#fff" />
-          </TouchableOpacity>
+          <Text style={styles.headerText}>Hey, {username}!</Text>
         </View>
 
-    
         <Animated.View style={{ flex: 1, opacity: fadeAnim }}>
           {showMap ? (
             <View style={styles.mapContainer}>
               <MapBox
-                onFilterPress={() => setFilterVisible(true)}
-                loggedIn={true}
+                onFilterPress={() => setFilterVisible(true)} 
                 username={username}
                 favorites={favorites}
                 toggleFavorite={toggleFavorite}
@@ -150,7 +145,6 @@ export default function UserHomeScreen({ navigation, route }) {
           )}
         </Animated.View>
 
-
         <Animated.View style={[styles.navBar, { transform: [{ scale: scaleAnim }] }]}>
           {[
             { icon: 'person-outline', label: t('profile'), route: 'Profile' },
@@ -170,6 +164,7 @@ export default function UserHomeScreen({ navigation, route }) {
           ))}
         </Animated.View>
 
+        
         <FilterModal
           visible={filterVisible}
           onClose={() => setFilterVisible(false)}
