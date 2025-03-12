@@ -13,7 +13,7 @@ export const login = async (email, password) => {
 
     // Retrieve Firebase authentication token
     const idToken = await user.getIdToken(true); // Force refresh
-    console.log('✅ Retrieved Firebase ID Token:', idToken);
+    // console.log('✅ Retrieved Firebase ID Token:', idToken);
 
     return { user, idToken };
   } catch (error) {
