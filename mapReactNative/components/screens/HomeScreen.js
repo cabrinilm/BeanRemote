@@ -3,7 +3,7 @@ import { View, Text, ImageBackground, StyleSheet, TouchableOpacity, Animated, To
 import { Ionicons } from '@expo/vector-icons';
 import logo from '../../assets/logo.jpg';
 import NewNavBar from '../NewNavBar';
-import MapBox from '../MapBox'; 
+import GuestMapBox from '../GuestMapBox'; // Importação ajustada
 
 const HomeScreen = ({ navigation }) => {
   const [showMap, setShowMap] = useState(false);
@@ -64,7 +64,7 @@ const HomeScreen = ({ navigation }) => {
               <TouchableOpacity style={styles.backButton} onPress={handleBackPress}>
                 <Ionicons name="close-outline" size={28} color="#fff" />
               </TouchableOpacity>
-              <MapBox onFilterPress={() => console.log('Filter pressed')} />
+              <GuestMapBox navigation={navigation} />
             </View>
           </>
         ) : (
@@ -84,11 +84,12 @@ const HomeScreen = ({ navigation }) => {
       </View>
 
       <View style={styles.navbarContainer}>
-      <NewNavBar navigation={navigation} />
+        <NewNavBar navigation={navigation} />
       </View>
     </ImageBackground>
   );
 };
+
 const styles = StyleSheet.create({
   backgroundImage: {
     flex: 1,
@@ -96,8 +97,8 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   container: {
-    flex: 1, 
-    justifyContent: 'center'
+    flex: 1,
+    justifyContent: 'center',
   },
   initialContent: {
     alignItems: 'center',
@@ -159,7 +160,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    backgroundColor: 'rgba(255,255,255,0.9)', 
+    backgroundColor: 'rgba(255,255,255,0.9)',
     borderTopColor: '#ddd',
     zIndex: 10,
     paddingVertical: 10,
