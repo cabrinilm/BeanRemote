@@ -176,8 +176,7 @@ export const deleteUserFavourite = (user_id, cafe_id) => {
     });
 };
 
-// --- Cafes Endpoints ---
-import beanRemoteAPI from './beanRemoteAPI'; // Ensure you have the API base setup
+// --- Cafes Endpoints --
 
 // --- Get All Cafés (with optional filtering by amenity) ---
 export const getCafes = (params = {}) => {
