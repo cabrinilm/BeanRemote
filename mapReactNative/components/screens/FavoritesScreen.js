@@ -28,7 +28,6 @@ const FavoritesScreen = () => {
     setLoading(true);
     try {
       const userFavorites = await getUserFavourites(user.id);
-    
       setFavorites(Array.isArray(userFavorites) ? userFavorites : []);
       setError(null);
     } catch (err) {

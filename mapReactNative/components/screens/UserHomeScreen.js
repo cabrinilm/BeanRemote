@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import styles from './styles/UserHomeScreen';
 import backgroundImg from '../../assets/coffee-beans-background.jpg';
 import UserAccount from '../../src/context/UserAccount';
+import CafeList from '../CafeList';
 
 export default function UserHomeScreen({ navigation, route }) {
   const [filterVisible, setFilterVisible] = useState(false);
@@ -19,8 +20,6 @@ export default function UserHomeScreen({ navigation, route }) {
     setLoading,
     isErrorPopupOpen,
     setIsErrorPopupOpen,
-    // favorites,
-    // setFavorites,
     preferences,
     setPreferences,
     reviews,
@@ -48,12 +47,6 @@ export default function UserHomeScreen({ navigation, route }) {
   const handleLogout = () => {
     setFavorites([]);
     navigation.reset({ index: 0, routes: [{ name: 'Home' }] });
-  };
-
-  const toggleFavorite = (shop) => {
-    setFavorites(favorites.some(fav => fav.id === shop.id)
-      ? favorites.filter(fav => fav.id !== shop.id)
-      : [...favorites, shop]);
   };
 
   const handleFilterSelect = (type) => {
@@ -90,39 +83,12 @@ export default function UserHomeScreen({ navigation, route }) {
       loggedIn: true,
       username,
       favorites,
-      toggleFavorite,
     });
   };
-
-  const renderCafeItem = ({ item }) => (
-    <TouchableOpacity 
-      style={styles.cafeItem} 
-      onPress={() => handleCafePress(item)} 
-    >
-      <View style={styles.cafeInfo}>
-        <Text style={styles.cafeName}>{item.name}</Text>
-        <Text style={styles.cafeDetails}>{item.distance} • {item.rating} ★</Text>
-      </View>
-      <TouchableOpacity 
-        onPress={(e) => {
-          e.stopPropagation(); 
-          toggleFavorite(item);
-        }} 
-        style={styles.favoriteButton}
-      >
-        <Ionicons
-          name={favorites.some(fav => fav.id === item.id) ? 'heart' : 'heart-outline'}
-          size={24}
-          color={favorites.some(fav => fav.id === item.id) ? '#FF4444' : '#fff'}
-        />
-      </TouchableOpacity>
-    </TouchableOpacity>
-  );
 
   return (
     <ImageBackground source={backgroundImg} style={styles.background} imageStyle={{ opacity: 0.7 }}>
       <SafeAreaView style={styles.container}>
-       
         <View style={styles.header}>
           <Text style={styles.headerText}>Hey, {user?.full_name}!</Text>
         </View>
@@ -131,10 +97,9 @@ export default function UserHomeScreen({ navigation, route }) {
           {showMap ? (
             <View style={styles.mapContainer}>
               <MapBox
-                onFilterPress={() => setFilterVisible(true)} 
+                onFilterPress={() => setFilterVisible(true)}
                 username={username}
                 favorites={favorites}
-                toggleFavorite={toggleFavorite}
                 filterType={filterType}
                 onCoffeeShopsUpdate={handleCoffeeShopsUpdate}
               />
@@ -147,11 +112,12 @@ export default function UserHomeScreen({ navigation, route }) {
             <View style={styles.listContainer}>
               <Text style={styles.sectionTitle}>{t('nearbyCafes')}</Text>
               {nearbyCafes.length > 0 ? (
-                <FlatList
-                  data={nearbyCafes}
-                  renderItem={renderCafeItem}
-                  keyExtractor={(item) => item.id.toString()}
-                  contentContainerStyle={styles.cafeList}
+                <CafeList
+                  cafes={nearbyCafes}
+                  favorites={favorites}
+                  setFavorites={setFavorites}
+                  onCafePress={handleCafePress}
+                  username={username}
                 />
               ) : (
                 <Text style={styles.noCafesText}>No nearby cafés found</Text>
@@ -174,7 +140,11 @@ export default function UserHomeScreen({ navigation, route }) {
             <TouchableOpacity
               key={index}
               onPressIn={() => animatePress(0.9)}
-              onPressOut={() => animatePress(1, () => item.action ? item.action() : navigation.navigate(item.route, { username, favorites }))}
+              onPressOut={() =>
+                animatePress(1, () =>
+                  item.action ? item.action() : navigation.navigate(item.route, { username, favorites })
+                )
+              }
               style={styles.navItem}
             >
               <Ionicons name={item.icon} size={28} color="#fff" />
@@ -183,7 +153,6 @@ export default function UserHomeScreen({ navigation, route }) {
           ))}
         </Animated.View>
 
-        
         <FilterModal
           visible={filterVisible}
           onClose={() => setFilterVisible(false)}
