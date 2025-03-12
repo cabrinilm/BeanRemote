@@ -3,6 +3,10 @@ import UserAccount from './UserAccount';
 
 export default function UserAccountProvider({ children }) {
   const [user, setUser] = useState(null);
+  const [favorites, setFavorites] = useState([]);
+  const [preferences, setPreferences] = useState([]);
+  const [visits, setVisits] = useState([]);
+  const [reviews, setReviews] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [isErrorPopupOpen, setIsErrorPopupOpen] = useState(false);
@@ -18,6 +22,14 @@ export default function UserAccountProvider({ children }) {
         setLoading,
         isErrorPopupOpen,
         setIsErrorPopupOpen,
+        favorites,
+        setFavorites,
+        preferences,
+        setPreferences,
+        reviews,
+        setReviews,
+        visits,
+        setVisits,
       }}
     >
       {children}

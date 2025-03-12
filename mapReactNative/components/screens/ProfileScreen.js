@@ -1,66 +1,4 @@
-// import React from "react";
-// import { View, Text, Image, TouchableOpacity, ScrollView } from "react-native";
-// import styles from "./styles/ProfileScreenStyles";
-
-// const ProfileScreen = ({ route }) => {
-//   const username = route?.params?.username || "Guest";
-
-//   return (
-//     <ScrollView style={styles.container}>
-//       <View style={styles.header}>
-//         <View style={styles.profilePictureContainer}>
-//           <Image
-//             source={{ uri: "https://via.placeholder.com/100" }}
-//             style={styles.profilePicture}
-//           />
-//         </View>
-
-//         <View style={styles.userInfo}>
-//           <Text style={styles.username}>{username}</Text>
-//           <View style={styles.statsContainer}>
-//             <View style={styles.stat}>
-//               <Text style={styles.statNumber}>12</Text>
-//               <Text style={styles.statLabel}>Posts</Text>
-//             </View>
-//             {/* <View style={styles.stat}>
-//               <Text style={styles.statNumber}>245</Text>
-//               <Text style={styles.statLabel}>Followers</Text>
-//             </View>
-//             <View style={styles.stat}>
-//               <Text style={styles.statNumber}>180</Text>
-//               <Text style={styles.statLabel}>Following</Text>
-//             </View> */}
-//           </View>
-//         </View>
-//       </View>
-
-//       <View style={styles.bioContainer}>
-//         <Text style={styles.bioText}>Coffe and Code. ☕</Text>
-//       </View>
-
-//       <TouchableOpacity style={styles.editButton}>
-//         <Text style={styles.editButtonText}>Edit Profile</Text>
-//       </TouchableOpacity>
-
-//       <View style={styles.postsContainer}>
-//         <View style={styles.postRow}>
-//           <View style={styles.postPlaceholder} />
-//           <View style={styles.postPlaceholder} />
-//           <View style={styles.postPlaceholder} />
-//         </View>
-//         <View style={styles.postRow}>
-//           <View style={styles.postPlaceholder} />
-//           <View style={styles.postPlaceholder} />
-//           <View style={styles.postPlaceholder} />
-//         </View>
-//       </View>
-//     </ScrollView>
-//   );
-// };
-
-// export default ProfileScreen;
-
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -71,17 +9,43 @@ import {
   Modal,
   Button,
   StyleSheet,
-} from "react-native";
-import * as ImagePicker from "expo-image-picker";
-import styles from "./styles/ProfileScreenStyles";
+} from 'react-native';
+import * as ImagePicker from 'expo-image-picker';
+import styles from './styles/ProfileScreenStyles';
+import UserAccount from '../../src/context/UserAccount';
+import {
+  getUserAmenities,
+  getUserFavourites,
+  getUserReviews,
+  getVisits,
+} from '../../src/services/api';
+import { set } from 'lodash';
 
 const ProfileScreen = ({ route }) => {
-  const username = route?.params?.username || "Guest";
-  const [bioText, setBioText] = useState("Coffee and Code. ☕");
+  const {
+    user,
+    setUser,
+    error,
+    setError,
+    loading,
+    setLoading,
+    isErrorPopupOpen,
+    setIsErrorPopupOpen,
+    favorites,
+    setFavorites,
+    preferences,
+    setPreferences,
+    reviews,
+    setReviews,
+    visits,
+    setVisits,
+  } = useContext(UserAccount);
+
+  const [username, setUsername] = useState('');
+  const [bioText, setBioText] = useState('');
+  const [badge, setBadge] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
-  const [profilePicture, setProfilePicture] = useState(
-    "https://via.placeholder.com/100"
-  );
+  const [profilePicture, setProfilePicture] = useState('');
   const [posts, setPosts] = useState([]);
 
   const pickImage = async (setImage) => {
@@ -115,6 +79,39 @@ const ProfileScreen = ({ route }) => {
     }
   };
 
+  useEffect(() => {
+    setLoading(true);
+    setError(null);
+    setProfilePicture(
+      user?.avatar || 'https://avatars.githubusercontent.com/u/17879520?v=4'
+    );
+    setUsername(user?.full_name || 'Guest');
+    setBadge(user?.badges[0] || 'Newbie');
+    Promise.all([
+      getUserFavourites(user?.id),
+      getUserAmenities(user?.id),
+      getUserReviews(user?.id),
+      getVisits({ user_id: user?.id }),
+    ])
+      .then(([userFavourites, userPreferences, userReviews, userVisits]) => {
+        setFavorites(userFavourites);
+        setPreferences(userPreferences);
+        setReviews(userReviews);
+        setVisits(userVisits);
+      })
+      .catch((error) => {
+        console.error('❌ Profile Error:', error);
+        setError(
+          error.response
+            ? `Status: ${error.response.status} Message: "${error.response.data.msg}"`
+            : 'An unexpected error occurred in getting the user data'
+        );
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, []);
+
   return (
     <ScrollView style={styles.container}>
       <View style={styles.header}>
@@ -129,15 +126,27 @@ const ProfileScreen = ({ route }) => {
           <Text style={styles.username}>{username}</Text>
           <View style={styles.statsContainer}>
             <View style={styles.stat}>
-              <Text style={styles.statNumber}>{posts.length}</Text>
-              <Text style={styles.statLabel}>Posts</Text>
+              <Text style={styles.statNumber}>{reviews.length}</Text>
+              <Text style={styles.statLabel}>Reviews</Text>
+            </View>
+            <View style={styles.stat}>
+              <Text style={styles.statNumber}>{favorites.length}</Text>
+              <Text style={styles.statLabel}>Favorites</Text>
+            </View>
+            <View style={styles.stat}>
+              <Text style={styles.statNumber}>{preferences.length}</Text>
+              <Text style={styles.statLabel}>Preferences</Text>
+            </View>
+            <View style={styles.stat}>
+              <Text style={styles.statNumber}>{visits.length}</Text>
+              <Text style={styles.statLabel}>Visits</Text>
             </View>
           </View>
         </View>
       </View>
 
-      <View style={styles.bioContainer}>
-        <Text style={styles.bioText}>{bioText}</Text>
+      <View style={styles.badgeContainer}>
+        <Text style={styles.badgeText}>{badge}</Text>
       </View>
 
       <TouchableOpacity
@@ -160,7 +169,7 @@ const ProfileScreen = ({ route }) => {
       </View>
 
       <Modal
-        animationType="slide"
+        animationType='slide'
         transparent={true}
         visible={modalVisible}
         onRequestClose={() => setModalVisible(false)}
@@ -171,7 +180,7 @@ const ProfileScreen = ({ route }) => {
 
             <Text style={modalStyles.label}>Change Profile Picture:</Text>
             <Button
-              title="Pick an Image"
+              title='Pick an Image'
               onPress={() => pickImage(setProfilePicture)}
             />
 
@@ -183,13 +192,13 @@ const ProfileScreen = ({ route }) => {
             />
 
             <Text style={modalStyles.label}>Add Post:</Text>
-            <Button title="Pick an Image for Post" onPress={addPost} />
+            <Button title='Pick an Image for Post' onPress={addPost} />
 
             <View style={modalStyles.buttonContainer}>
-              <Button title="Save" onPress={handleSave} />
+              <Button title='Save' onPress={handleSave} />
               <Button
-                title="Cancel"
-                color="red"
+                title='Cancel'
+                color='red'
                 onPress={() => setModalVisible(false)}
               />
             </View>
@@ -203,39 +212,39 @@ const ProfileScreen = ({ route }) => {
 const modalStyles = StyleSheet.create({
   modalContainer: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.5)',
   },
   modalContent: {
-    width: "80%",
-    backgroundColor: "white",
+    width: '80%',
+    backgroundColor: 'white',
     padding: 20,
     borderRadius: 10,
-    alignItems: "center",
+    alignItems: 'center',
   },
   modalTitle: {
     fontSize: 18,
-    fontWeight: "bold",
+    fontWeight: 'bold',
     marginBottom: 10,
   },
   label: {
-    alignSelf: "flex-start",
+    alignSelf: 'flex-start',
     fontSize: 14,
     marginTop: 10,
   },
   input: {
-    width: "100%",
+    width: '100%',
     borderWidth: 1,
-    borderColor: "gray",
+    borderColor: 'gray',
     borderRadius: 5,
     padding: 8,
     marginTop: 5,
   },
   buttonContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    width: "100%",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
     marginTop: 15,
   },
   postImage: {
@@ -245,9 +254,9 @@ const modalStyles = StyleSheet.create({
     borderRadius: 5,
   },
   postsGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "center",
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
   },
 });
 

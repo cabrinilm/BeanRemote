@@ -1,9 +1,9 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff', 
+    backgroundColor: '#fff',
   },
   header: {
     flexDirection: 'row',
@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
   },
   statsContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'space-evenly',
   },
   stat: {
     alignItems: 'center',
@@ -43,11 +43,12 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#666',
   },
-  bioContainer: {
+  badgeContainer: {
     paddingHorizontal: 15,
     marginBottom: 15,
   },
-  bioText: {
+  badgeText: {
+    textAlign: 'left',
     fontSize: 14,
     color: '#333',
   },
@@ -74,24 +75,11 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   postPlaceholder: {
-    width: '32%', 
+    width: '32%',
     height: 120,
-    backgroundColor: '#f0f0f0', 
+    backgroundColor: '#f0f0f0',
     borderRadius: 5,
   },
 });
 
-
-
-
-
-
-
-
-
-
-
-
-
-
- export default styles 
+export default styles;

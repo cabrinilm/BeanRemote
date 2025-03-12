@@ -21,6 +21,10 @@ export default function LoginScreen({ navigation }) {
     setLoading,
     isErrorPopupOpen,
     setIsErrorPopupOpen,
+    favorites,
+    setFavorites,
+    preferences,
+    setPreferences,
   } = useContext(UserAccount);
   const [email, setEmail] = useState('caroladmin@example.com');
   const [password, setPassword] = useState('159753');
@@ -28,16 +32,17 @@ export default function LoginScreen({ navigation }) {
   const handleLogin = async () => {
     try {
       if (email && password) {
-        setLoading(true);
+        // setLoading(true);
         setError(null);
         const userFromFirebase = await login(email, password);
         const params = { firebase_uid: userFromFirebase?.user?.uid };
         console.log('UID: ', params.firebase_uid);
         console.log('Token: ', userFromFirebase?.idToken);
-        const userData = await getUserByFirebaseUid(params);
-        setUser(userData);
-        setLoading(false);
-        console.log('userData:', userData);
+        getUserByFirebaseUid(params).then((userData) => {
+          setUser(userData);
+          // setLoading(false);
+          console.log('userData:', userData);
+        });
 
         if (user) {
           Alert.alert('Success', 'Login successful!', [
@@ -66,7 +71,7 @@ export default function LoginScreen({ navigation }) {
         }` || 'An unexpected error occurred in getting the user data'
       );
     } finally {
-      setLoading(false);
+      // setLoading(false);
     }
   };
 
