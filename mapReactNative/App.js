@@ -9,6 +9,7 @@ import HomeScreen from './components/screens/HomeScreen';
 import LoginScreen from './components/screens/LoginScreen';
 import SignUpScreen from './components/screens/SignUpScreen';
 import ProfileScreen from './components/screens/ProfileScreen';
+import EditProfileScreen from './components/screens/EditProfileScreen';
 import FavoritesScreen from './components/screens/FavoritesScreen';
 import SettingsScreen from './components/screens/Settings/SettingsScreen';
 import CoffeeProfileScreen from './components/screens/CoffeeProfileScreen';
@@ -50,6 +51,11 @@ export default function App() {
               name='Profile'
               component={ProfileScreen}
               options={{ title: 'Profile' }}
+            />
+            <Stack.Screen
+              name='EditProfile'
+              component={EditProfileScreen}
+              options={{ title: 'Edit Profile' }}
             />
             <Stack.Screen
               name='Favorites'

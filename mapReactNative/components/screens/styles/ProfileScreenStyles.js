@@ -19,9 +19,9 @@ const styles = StyleSheet.create({
     marginRight: 20,
   },
   profilePicture: {
-    width: 90,
-    height: 90,
-    borderRadius: 45,
+    width: 120,
+    height: 120,
+    borderRadius: 60,
     borderWidth: 1,
     borderColor: '#ddd',
   },
@@ -48,16 +48,23 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#666',
   },
+  bioContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   badgeContainer: {
     paddingHorizontal: 15,
     marginBottom: 15,
   },
   badgeText: {
     textAlign: 'left',
+    paddingLeft: 20,
     fontSize: 14,
     color: '#333',
   },
   editButton: {
+    backgroundColor: '#f0f0f0',
     marginHorizontal: 15,
     paddingVertical: 8,
     borderWidth: 1,

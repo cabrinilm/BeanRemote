@@ -4,9 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import styles from './styles/LoginScreenStyles';
 import { login } from './../../src/services/auth';
 import {
-  getUsers,
   getUserByFirebaseUid,
-  getCafes,
   getUserFavourites,
   getUserAmenities,
   getUserReviews,
