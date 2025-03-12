@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { View, Text, TouchableOpacity, SafeAreaView, ImageBackground, Animated, FlatList } from 'react-native';
 import MapBox from '../MapBox';
 import FilterModal from '../FilterModal';
@@ -6,9 +6,28 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import styles from './styles/UserHomeScreen';
 import backgroundImg from '../../assets/coffee-beans-background.jpg';
+import UserAccount from '../../src/context/UserAccount';
 
 export default function UserHomeScreen({ navigation, route }) {
   const [filterVisible, setFilterVisible] = useState(false);
+  const {
+    user,
+    setUser,
+    error,
+    setError,
+    loading,
+    setLoading,
+    isErrorPopupOpen,
+    setIsErrorPopupOpen,
+    // favorites,
+    // setFavorites,
+    preferences,
+    setPreferences,
+    reviews,
+    setReviews,
+    visits,
+    setVisits,
+  } = useContext(UserAccount);
   const [filterType, setFilterType] = useState('radius');
   const [favorites, setFavorites] = useState([]);
   const [showMap, setShowMap] = useState(false);
@@ -105,7 +124,7 @@ export default function UserHomeScreen({ navigation, route }) {
       <SafeAreaView style={styles.container}>
        
         <View style={styles.header}>
-          <Text style={styles.headerText}>Hey, {username}!</Text>
+          <Text style={styles.headerText}>Hey, {user?.full_name}!</Text>
         </View>
 
         <Animated.View style={{ flex: 1, opacity: fadeAnim }}>

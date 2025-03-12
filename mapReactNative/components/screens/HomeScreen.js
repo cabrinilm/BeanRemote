@@ -3,7 +3,7 @@ import { View, Text, ImageBackground, StyleSheet, TouchableOpacity, Animated, To
 import { Ionicons } from '@expo/vector-icons';
 import logo from '../../assets/logo.jpg';
 import NewNavBar from '../NewNavBar';
-import GuestMapBox from '../GuestMapBox'; // Importação ajustada
+import GuestMapBox from '../GuestMapBox'; 
 
 const HomeScreen = ({ navigation }) => {
   const [showMap, setShowMap] = useState(false);
