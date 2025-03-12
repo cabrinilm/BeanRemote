@@ -20,6 +20,8 @@ export default function UserHomeScreen({ navigation, route }) {
     setLoading,
     isErrorPopupOpen,
     setIsErrorPopupOpen,
+    favorites, 
+    setFavorites, 
     preferences,
     setPreferences,
     reviews,
@@ -28,7 +30,6 @@ export default function UserHomeScreen({ navigation, route }) {
     setVisits,
   } = useContext(UserAccount);
   const [filterType, setFilterType] = useState('radius');
-  const [favorites, setFavorites] = useState([]);
   const [showMap, setShowMap] = useState(false);
   const [nearbyCafes, setNearbyCafes] = useState([]);
   const username = route.params?.username || 'Guest';

@@ -4,7 +4,8 @@ import { useRoute, useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 import styles from './styles/FavoritesScreenStyles';
 import UserAccount from '../../src/context/UserAccount';
-import { getUserFavourites } from '../../src/services/api';
+import { getUserFavourites, deleteUserFavourite } from '../../src/services/api';
+import { Ionicons } from '@expo/vector-icons';
 
 
 const FavoritesScreen = () => {
@@ -37,24 +38,50 @@ const FavoritesScreen = () => {
     }
   };
 
+  const removeFavorite = async (cafeId) => {
+    console.log('Removing favorite - User ID:', user.id, 'Cafe ID:', cafeId);
+    try {
+      await deleteUserFavourite(user.id, cafeId);
+      setFavorites(favorites.filter((fav) => fav.cafe_id !== cafeId));
+    } catch (err) {
+      console.error('Error removing favorite:', err.response || err.message || err);
+      setError('Failed to remove favorite');
+    }
+  };
+
   useEffect(() => {
     fetchFavorites();
   }, [user?.id]);
 
   const renderFavorite = ({ item }) => (
-    <TouchableOpacity
-      style={styles.favoriteItem}
-      onPress={() =>
-        navigation.navigate('CoffeeProfile', {
-          shop: item,
-          loggedIn: true,
-          username,
-          favorites,
-        })
-      }
-    >
-      <Text style={styles.favoriteName}>{item.name}</Text>
-    </TouchableOpacity>
+    <View style={styles.favoriteItemContainer}>
+    
+      <TouchableOpacity
+        style={styles.favoriteItem}
+        onPress={() =>
+          navigation.navigate('CoffeeProfile', {
+            shop: item,
+            loggedIn: true,
+            username,
+            favorites,
+          })
+        }
+      >
+        <Text style={styles.favoriteName}>{item.name}</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.favoriteButton}
+        onPress={() => {
+          if (!item.cafe_id) {
+            console.error('Cafe ID is undefined for item:', item);
+            return;
+          }
+          removeFavorite(item.cafe_id);
+        }}
+      >
+        <Ionicons name="heart" size={24} color="#FF4444" />
+      </TouchableOpacity>
+    </View>
   );
 
   const safeFavorites = Array.isArray(favorites) ? favorites : [];
@@ -71,7 +98,7 @@ const FavoritesScreen = () => {
           data={safeFavorites}
           renderItem={renderFavorite}
           keyExtractor={(item, index) =>
-            item?.id ? item.id.toString() : index.toString()
+            item?.cafe_id ? item.cafe_id.toString() : index.toString()
           }
           ListEmptyComponent={<Text style={styles.emptyText}>{t('No favorites yet.')}</Text>}
         />
@@ -81,3 +108,4 @@ const FavoritesScreen = () => {
 };
 
 export default FavoritesScreen;
+
