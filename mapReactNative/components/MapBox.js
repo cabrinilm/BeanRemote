@@ -9,7 +9,6 @@ import debounce from 'lodash.debounce';
 
 const MapBox = ({ 
   onFilterPress, 
-  loggedIn, 
   username, 
   favorites, 
   toggleFavorite, 
@@ -98,57 +97,50 @@ const MapBox = ({
   ).current;
 
   useEffect(() => {
-    (async () => {
-      console.log('Requesting location permission...');
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      let initialRegion = {
-        latitude: 53.4808, 
-        longitude: -2.2426,
+    const fetchInitialCoffeeShops = async () => {
+      const defaultLocation = {
+        latitude: 51.5074, 
+        longitude: -0.1278, 
         latitudeDelta: 0.03,
         longitudeDelta: 0.03,
       };
 
-      if (status !== 'granted') {
-        console.log('Permission denied, using fallback location');
-        setLocation(initialRegion); 
-        fetchCoffeeShops(initialRegion); 
-        if (mapRef.current) {
-          mapRef.current.animateToRegion(initialRegion, 1000);
-        }
-        return;
-      }
-
       try {
-        console.log('Getting location...');
-        let locationData = await Location.getCurrentPositionAsync({
-          accuracy: Location.Accuracy.High,
-          timeout: 10000,
-        });
+        let { status } = await Location.requestForegroundPermissionsAsync();
 
-        const userLocation = {
-          latitude: locationData.coords.latitude,
-          longitude: locationData.coords.longitude,
-          latitudeDelta: 0.03,
-          longitudeDelta: 0.03,
-        };
+        if (status !== 'granted') {
+          console.log('Permission denied, using fallback location');
+          setLocation(defaultLocation);
+        } else {
+          let locationData = await Location.getCurrentPositionAsync({
+            accuracy: Location.Accuracy.High,
+            timeout: 10000,
+          });
 
-        console.log('User location set:', userLocation);
-        setLocation(locationData.coords);
-        if (mapRef.current) {
-          mapRef.current.animateToRegion(userLocation, 1000);
+          const userLocation = {
+            latitude: locationData.coords.latitude,
+            longitude: locationData.coords.longitude,
+            latitudeDelta: 0.03,
+            longitudeDelta: 0.03,
+          };
+
+          console.log('User location set:', userLocation);
+          setLocation(userLocation);
         }
-        fetchCoffeeShops(userLocation);
       } catch (error) {
-        console.error('Error getting location:', error.message);
-        setErrorMsg(`Error getting location: ${error.message}`);
-        setLocation(initialRegion);
-        fetchCoffeeShops(initialRegion);
-        if (mapRef.current) {
-          mapRef.current.animateToRegion(initialRegion, 1000);
-        }
+        console.error('Error fetching location:', error.message);
+        setLocation(defaultLocation);
       }
-    })();
-  }, [filterType]);
+    };
+
+    fetchInitialCoffeeShops();
+  }, [fetchCoffeeShops]); 
+
+  useEffect(() => {
+    if (location) {
+      fetchCoffeeShops(location);
+    }
+  }, [location]); 
 
   const handleRegionChange = (region) => {
     if (filterType !== 'radius') {
@@ -166,8 +158,8 @@ const MapBox = ({
             ref={mapRef}
             style={styles.map}
             initialRegion={{
-              latitude: 53.4808,
-              longitude: -2.2426,
+              latitude: 51.5074,  
+              longitude: -0.1278,
               latitudeDelta: 0.03,
               longitudeDelta: 0.03,
             }}
@@ -183,7 +175,6 @@ const MapBox = ({
                 onPress={() =>
                   navigation.navigate('CoffeeProfile', {
                     shop,
-                    loggedIn,
                     username,
                     favorites,
                     toggleFavorite,
