@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
+import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
 import {
   View,
   Text,
@@ -14,13 +15,6 @@ import {
 import * as ImagePicker from 'expo-image-picker';
 import styles from './styles/ProfileScreenStyles';
 import UserAccount from '../../src/context/UserAccount';
-import {
-  getUserAmenities,
-  getUserFavourites,
-  getUserReviews,
-  getVisits,
-} from '../../src/services/api';
-import { set } from 'lodash';
 
 const ProfileScreen = ({ route }) => {
   const {
@@ -42,13 +36,8 @@ const ProfileScreen = ({ route }) => {
     setVisits,
   } = useContext(UserAccount);
 
-  const [username, setUsername] = useState(user?.full_name || 'Guest');
   const [bioText, setBioText] = useState('');
-  const [badge, setBadge] = useState(user?.badges[0] || 'Newbie');
   const [modalVisible, setModalVisible] = useState(false);
-  const [profilePicture, setProfilePicture] = useState(
-    user?.avatar || 'https://avatars.githubusercontent.com/u/17879520?v=4'
-  );
   const [posts, setPosts] = useState([]);
 
   const pickImage = async (setImage) => {
@@ -82,124 +71,169 @@ const ProfileScreen = ({ route }) => {
     }
   };
 
+  console.log('Favorites : ', favorites);
+  console.log('Reviews : ', reviews);
+
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.header}>
-        <View style={styles.profilePictureContainer}>
-          <Image
-            source={{ uri: profilePicture }}
-            style={styles.profilePicture}
-          />
-        </View>
-
-        <View style={styles.userInfo}>
-          <Text style={styles.username}>{username}</Text>
-          <View style={styles.statsContainer}>
-            <View style={styles.stat}>
-              <Text style={styles.statNumber}>{reviews.length}</Text>
-              <Text style={styles.statLabel}>Reviews</Text>
-            </View>
-            <View style={styles.stat}>
-              <Text style={styles.statNumber}>{favorites.length}</Text>
-              <Text style={styles.statLabel}>Favorites</Text>
-            </View>
-            <View style={styles.stat}>
-              <Text style={styles.statNumber}>{preferences.length}</Text>
-              <Text style={styles.statLabel}>Preferences</Text>
-            </View>
-            <View style={styles.stat}>
-              <Text style={styles.statNumber}>{visits.length}</Text>
-              <Text style={styles.statLabel}>Visits</Text>
-            </View>
-          </View>
-        </View>
-      </View>
-
-      <View style={styles.badgeContainer}>
-        <Text style={styles.badgeText}>{badge}</Text>
-      </View>
-
-      {/* Favorite Cafes List */}
-      {/* <Text style={styles.sectionTitle}>Favorite Cafés</Text>
-      <FlatList
-        data={favorites}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => (
-          <View style={styles.listItem}>
-            <Text>{item.name}</Text>
-          </View>
-        )}
-      /> */}
-
-      {/* Last Reviews List */}
-      {/* <Text style={styles.sectionTitle}>Last Reviews</Text>
-      <FlatList
-        data={reviews.slice(0, 3)}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => (
-          <View style={styles.listItem}>
-            <Text>{item.text}</Text>
-          </View>
-        )}
-      /> */}
-
-      <TouchableOpacity
-        style={styles.editButton}
-        onPress={() => setModalVisible(true)}
-      >
-        <Text style={styles.editButtonText}>Edit Profile</Text>
-      </TouchableOpacity>
-
-      <View style={styles.postsContainer}>
-        <View style={styles.postsGrid}>
-          {posts.map((post, index) => (
-            <Image
-              key={index}
-              source={{ uri: post }}
-              style={styles.postImage}
-            />
-          ))}
-        </View>
-      </View>
-
-      <Modal
-        animationType='slide'
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => setModalVisible(false)}
-      >
-        <View style={modalStyles.modalContainer}>
-          <View style={modalStyles.modalContent}>
-            <Text style={modalStyles.modalTitle}>Edit Profile</Text>
-
-            <Text style={modalStyles.label}>Change Profile Picture:</Text>
-            <Button
-              title='Pick an Image'
-              onPress={() => pickImage(setProfilePicture)}
-            />
-
-            <Text style={modalStyles.label}>Edit Bio:</Text>
-            <TextInput
-              style={modalStyles.input}
-              value={bioText}
-              onChangeText={(text) => setBioText(text)}
-            />
-
-            <Text style={modalStyles.label}>Add Post:</Text>
-            <Button title='Pick an Image for Post' onPress={addPost} />
-
-            <View style={modalStyles.buttonContainer}>
-              <Button title='Save' onPress={handleSave} />
-              <Button
-                title='Cancel'
-                color='red'
-                onPress={() => setModalVisible(false)}
+    <SafeAreaProvider>
+      <SafeAreaView style={styles.container}>
+        {/* SECTION: User Info */}
+        <View style={styles.userInfoContainer}>
+          <View style={styles.header}>
+            <View style={styles.profilePictureContainer}>
+              <Image
+                source={{
+                  uri:
+                    user?.avatar ||
+                    'https://avatars.githubusercontent.com/u/17879520?v=4',
+                }}
+                style={styles.profilePicture}
               />
             </View>
+
+            <View style={styles.userInfo}>
+              <Text style={styles.username}>{user?.full_name || 'Guest'}</Text>
+              <View style={styles.statsContainer}>
+                <View style={styles.stat}>
+                  <Text style={styles.statNumber}>{reviews.length}</Text>
+                  <Text style={styles.statLabel}>Reviews</Text>
+                </View>
+                <View style={styles.stat}>
+                  <Text style={styles.statNumber}>{favorites.length}</Text>
+                  <Text style={styles.statLabel}>Favorites</Text>
+                </View>
+                <View style={styles.stat}>
+                  <Text style={styles.statNumber}>{preferences.length}</Text>
+                  <Text style={styles.statLabel}>Preferences</Text>
+                </View>
+                <View style={styles.stat}>
+                  <Text style={styles.statNumber}>{visits.length}</Text>
+                  <Text style={styles.statLabel}>Visits</Text>
+                </View>
+              </View>
+            </View>
+          </View>
+
+          <Text style={styles.badgeText}>
+            {user?.badges?.length > 0 ? user.badges.join(', ') : 'Newbie'}
+          </Text>
+        </View>
+
+        {/* SECTION: Favorite Cafés */}
+        <View style={styles.sectionContainer}>
+          <Text style={styles.sectionTitle}>Favorite Cafés</Text>
+          {favorites.length > 0 ? (
+            <FlatList
+              data={favorites}
+              keyExtractor={(item) => item.cafe_id.toString()}
+              nestedScrollEnabled={true}
+              renderItem={({ item }) => (
+                <View style={styles.listItem}>
+                  <Text style={styles.listItemTitle}>{item.name}</Text>
+                  <Text style={styles.listItemSubtitle}>{item.address}</Text>
+                </View>
+              )}
+            />
+          ) : (
+            <Text style={styles.noDataText}>No favorite cafés yet.</Text>
+          )}
+        </View>
+
+        {/* SECTION: Last Reviews */}
+        <View style={styles.sectionContainer}>
+          <Text style={styles.sectionTitle}>Recent Reviews</Text>
+          {reviews.length > 0 ? (
+            <FlatList
+              data={reviews.slice(0, 3)}
+              keyExtractor={(item) => item.review_id.toString()}
+              nestedScrollEnabled={true}
+              renderItem={({ item }) => (
+                <View style={styles.listItem}>
+                  <Text style={styles.listItemTitle}>{item.cafe_name}</Text>
+                  <Text style={styles.listItemSubtitle}>
+                    {item.review_text}
+                  </Text>
+                  <Text style={styles.listItemRating}>⭐ {item.rating}/5</Text>
+                </View>
+              )}
+            />
+          ) : (
+            <Text style={styles.noDataText}>No reviews yet.</Text>
+          )}
+        </View>
+
+        {/* SECTION: User Preferences */}
+        <View style={styles.sectionContainer}>
+          <Text style={styles.sectionTitle}>Preferences</Text>
+          {preferences.length > 0 ? (
+            preferences.map((preference, index) => (
+              <View key={index} style={styles.preferenceItem}>
+                <Text style={styles.preferenceText}>{preference.name}</Text>
+              </View>
+            ))
+          ) : (
+            <Text style={styles.noDataText}>No preferences selected.</Text>
+          )}
+        </View>
+
+        <TouchableOpacity
+          style={styles.editButton}
+          onPress={() => setModalVisible(true)}
+        >
+          <Text style={styles.editButtonText}>Edit Profile</Text>
+        </TouchableOpacity>
+
+        <View style={styles.postsContainer}>
+          <View style={styles.postsGrid}>
+            {posts.map((post, index) => (
+              <Image
+                key={index}
+                source={{ uri: post }}
+                style={styles.postImage}
+              />
+            ))}
           </View>
         </View>
-      </Modal>
-    </ScrollView>
+
+        <Modal
+          animationType='slide'
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={() => setModalVisible(false)}
+        >
+          <View style={modalStyles.modalContainer}>
+            <View style={modalStyles.modalContent}>
+              <Text style={modalStyles.modalTitle}>Edit Profile</Text>
+
+              <Text style={modalStyles.label}>Change Profile Picture:</Text>
+              <Button
+                title='Pick an Image'
+                onPress={() => pickImage(setProfilePicture)}
+              />
+
+              <Text style={modalStyles.label}>Edit Bio:</Text>
+              <TextInput
+                style={modalStyles.input}
+                value={bioText}
+                onChangeText={(text) => setBioText(text)}
+              />
+
+              <Text style={modalStyles.label}>Add Post:</Text>
+              <Button title='Pick an Image for Post' onPress={addPost} />
+
+              <View style={modalStyles.buttonContainer}>
+                <Button title='Save' onPress={handleSave} />
+                <Button
+                  title='Cancel'
+                  color='red'
+                  onPress={() => setModalVisible(false)}
+                />
+              </View>
+            </View>
+          </View>
+        </Modal>
+      </SafeAreaView>
+    </SafeAreaProvider>
   );
 };
 

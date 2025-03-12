@@ -10,6 +10,11 @@ const styles = StyleSheet.create({
     padding: 15,
     alignItems: 'center',
   },
+  userInfoContainer: {
+    padding: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ddd',
+  },
   profilePictureContainer: {
     marginRight: 20,
   },
@@ -60,12 +65,86 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     alignItems: 'center',
     marginBottom: 20,
+    marginTop: 20,
   },
   editButtonText: {
     fontSize: 16,
     fontWeight: 'bold',
     color: '#000',
   },
+  postsContainer: {
+    paddingHorizontal: 5,
+  },
+  postRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 5,
+  },
+  postPlaceholder: {
+    width: '32%',
+    height: 120,
+    backgroundColor: '#f0f0f0',
+    borderRadius: 5,
+  },
+  // ✅ New styles for Sections
+  sectionContainer: {
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ddd',
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 8,
+    color: '#333',
+  },
+  noDataText: {
+    fontSize: 14,
+    color: '#888',
+    fontStyle: 'italic',
+  },
+
+  // ✅ Styles for Favorite Cafés and Reviews
+  listItem: {
+    backgroundColor: '#f9f9f9',
+    padding: 12,
+    marginVertical: 6,
+    borderRadius: 8,
+    shadowColor: '#ccc',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+  },
+  listItemTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#222',
+  },
+  listItemSubtitle: {
+    fontSize: 14,
+    color: '#666',
+    marginTop: 2,
+  },
+  listItemRating: {
+    fontSize: 14,
+    color: '#ffaa00',
+    fontWeight: 'bold',
+    marginTop: 5,
+  },
+
+  // ✅ Preferences Styling
+  preferenceItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 6,
+  },
+  preferenceText: {
+    fontSize: 16,
+    marginLeft: 8,
+    color: '#444',
+  },
+
   postsContainer: {
     paddingHorizontal: 5,
   },
