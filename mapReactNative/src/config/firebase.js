@@ -1,7 +1,8 @@
 import { initializeApp } from '@firebase/app';
 //@ts-ignore
 import { getReactNativePersistence } from '@firebase/auth/dist/rn/index.js';
-import { getAuth, initializeAuth } from 'firebase/auth';
+import { initializeAuth } from 'firebase/auth';
+import { getStorage } from 'firebase/storage';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const firebaseConfig = {
@@ -22,4 +23,8 @@ const auth = initializeAuth(app, {
   persistence: getReactNativePersistence(AsyncStorage),
 });
 
-export { app, auth };
+const storage = getStorage(app);
+
+// const storage = getStorage(firebaseApp, "gs://my-custom-bucket");
+
+export { app, auth, storage };
