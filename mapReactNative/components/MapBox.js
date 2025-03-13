@@ -15,14 +15,15 @@ const MapBox = ({
   filterType = 'visible', 
   onCoffeeShopsUpdate 
 }) => {
-  const [location, setLocation] = useState(null); 
+  const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
   const [coffeeShops, setCoffeeShops] = useState([]);
+  const [mapKey, setMapKey] = useState(0); 
   const mapRef = useRef(null);
   const navigation = useNavigation();
 
   const calculateDistance = (lat1, lon1, lat2, lon2) => {
-    const R = 6371; 
+    const R = 6371;
     const dLat = (lat2 - lat1) * Math.PI / 180;
     const dLon = (lon2 - lon1) * Math.PI / 180;
     const a =
@@ -81,6 +82,7 @@ const MapBox = ({
             });
           setCoffeeShops(formattedCafes);
           onCoffeeShopsUpdate(formattedCafes);
+          setMapKey(prev => prev + 1);
         } else {
           console.warn('API did not return an array of cafes:', response.data);
           setCoffeeShops([]);
@@ -97,21 +99,24 @@ const MapBox = ({
   ).current;
 
   useEffect(() => {
-    const fetchInitialCoffeeShops = async () => {
+    const fetchInitialData = async () => {
       const defaultLocation = {
         latitude: 51.5074, 
-        longitude: -0.1278, 
+        longitude: -0.1278,
         latitudeDelta: 0.03,
         longitudeDelta: 0.03,
       };
 
       try {
+        console.log('MapBox - Requesting location permission...');
         let { status } = await Location.requestForegroundPermissionsAsync();
 
         if (status !== 'granted') {
-          console.log('Permission denied, using fallback location');
+          console.log('MapBox - Permission denied, using fallback location');
           setLocation(defaultLocation);
+          await fetchCoffeeShops(defaultLocation); 
         } else {
+          console.log('MapBox - Getting location...');
           let locationData = await Location.getCurrentPositionAsync({
             accuracy: Location.Accuracy.High,
             timeout: 10000,
@@ -124,23 +129,19 @@ const MapBox = ({
             longitudeDelta: 0.03,
           };
 
-          console.log('User location set:', userLocation);
+          console.log('MapBox - User location set:', userLocation);
           setLocation(userLocation);
+          await fetchCoffeeShops(userLocation); 
         }
       } catch (error) {
-        console.error('Error fetching location:', error.message);
+        console.error('MapBox - Error fetching location:', error.message);
         setLocation(defaultLocation);
+        await fetchCoffeeShops(defaultLocation);
       }
     };
 
-    fetchInitialCoffeeShops();
-  }, [fetchCoffeeShops]); 
-
-  useEffect(() => {
-    if (location) {
-      fetchCoffeeShops(location);
-    }
-  }, [location]); 
+    fetchInitialData();
+  }, []);
 
   const handleRegionChange = (region) => {
     if (filterType !== 'radius') {
@@ -155,14 +156,16 @@ const MapBox = ({
       ) : (
         <>
           <MapView
+            key={mapKey} 
             ref={mapRef}
             style={styles.map}
             initialRegion={{
-              latitude: 51.5074,  
+              latitude: 51.5074,
               longitude: -0.1278,
               latitudeDelta: 0.03,
               longitudeDelta: 0.03,
             }}
+            region={location}
             showsUserLocation={location !== null}
             onRegionChangeComplete={handleRegionChange}
           >
