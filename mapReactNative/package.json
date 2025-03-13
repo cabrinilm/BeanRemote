@@ -28,6 +28,8 @@
     "inflight": "^1.0.6",
     "lodash": "^4.17.21",
     "lodash.debounce": "^4.0.8",
+    "lottie-ios": "^4.5.1",
+    "lottie-react-native": "^7.2.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-i18next": "^15.4.1",

@@ -1,58 +1,82 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Animated } from 'react-native';
 import * as Location from 'expo-location';
 import MapView, { Marker } from 'react-native-maps';
-import axios from 'axios';
-import debounce from 'lodash.debounce';
+import { getCafesByCoordinates } from '../src/services/api'; 
+import LoadingScreen from './LoadingScreen'; 
 
 const GuestMapBox = ({ navigation }) => {
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
   const [coffeeShops, setCoffeeShops] = useState([]);
-  const [mapKey, setMapKey] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
   const mapRef = useRef(null);
+  const markerAnims = useRef([]);
 
-  const fetchCoffeeShops = useRef(
-    debounce(async (region) => {
-      try {
-        console.log('GuestMapBox - Fetching with region:', region);
-        const response = await axios.get('https://be-bean-remote.onrender.com/api/cafes/map/radius', {
-          params: {
-            lat: region.latitude,
-            lon: region.longitude,
-            radius: 5000,
-          },
+  const fetchCoffeeShops = async (region) => {
+    try {
+      console.log('GuestMapBox - Fetching with region:', region);
+      const params = {
+        minLat: region.latitude - region.latitudeDelta / 2,
+        maxLat: region.latitude + region.latitudeDelta / 2,
+        minLon: region.longitude - region.longitudeDelta / 2,
+        maxLon: region.longitude + region.longitudeDelta / 2,
+      };
+      const cafes = await getCafesByCoordinates(params);
+
+      console.log('GuestMapBox - Response data:', cafes);
+
+      if (Array.isArray(cafes)) {
+        const formattedCafes = cafes
+          .filter((cafe) => typeof cafe.latitude === 'number' && typeof cafe.longitude === 'number')
+          .map((cafe) => ({
+            id: cafe.id,
+            name: cafe.name,
+            description: cafe.description,
+            latitude: cafe.latitude,
+            longitude: cafe.longitude,
+          }));
+
+        console.log('GuestMapBox - Setting coffee shops:', formattedCafes);
+        setCoffeeShops(formattedCafes);
+
+        
+        markerAnims.current = formattedCafes.map(() => ({
+          opacity: new Animated.Value(0),
+          scale: new Animated.Value(0.5),
+        }));
+
+       
+        formattedCafes.forEach((_, index) => {
+          Animated.sequence([
+            Animated.delay(index * 200),
+            Animated.parallel([
+              Animated.timing(markerAnims.current[index].opacity, {
+                toValue: 1,
+                duration: 300,
+                useNativeDriver: true,
+              }),
+              Animated.spring(markerAnims.current[index].scale, {
+                toValue: 1,
+                friction: 5,
+                useNativeDriver: true,
+              }),
+            ]),
+          ]).start();
         });
-
-        console.log('GuestMapBox - Response status:', response.status);
-        console.log('GuestMapBox - Response data:', response.data);
-
-        if (response.data && Array.isArray(response.data.cafes)) {
-          const formattedCafes = response.data.cafes
-            .filter((cafe) => typeof cafe.latitude === 'number' && typeof cafe.longitude === 'number')
-            .map((cafe) => ({
-              id: cafe.id,
-              name: cafe.name,
-              description: cafe.description,
-              latitude: cafe.latitude,
-              longitude: cafe.longitude,
-            }));
-
-          console.log('GuestMapBox - Setting coffee shops:', formattedCafes);
-          setCoffeeShops(formattedCafes);
-          setMapKey(prev => prev + 1);
-        } else {
-          console.warn('GuestMapBox - No cafes found or invalid format:', response.data);
-          setCoffeeShops([]);
-          setErrorMsg('No coffee shops available nearby');
-        }
-      } catch (error) {
-        console.error('GuestMapBox - Error fetching coffee shops:', error.message);
-        setErrorMsg('Failed to load coffee shops');
+      } else {
+        console.warn('GuestMapBox - No cafes found or invalid format:', cafes);
         setCoffeeShops([]);
+        setErrorMsg('No coffee shops available nearby');
       }
-    }, 300)
-  ).current;
+    } catch (error) {
+      console.error('GuestMapBox - Error fetching coffee shops:', error.message);
+      setErrorMsg('Failed to load coffee shops');
+      setCoffeeShops([]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
     const fetchInitialData = async () => {
@@ -101,11 +125,12 @@ const GuestMapBox = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      {errorMsg ? (
+      {isLoading ? (
+        <LoadingScreen /> 
+      ) : errorMsg ? (
         <Text style={styles.error}>{errorMsg}</Text>
       ) : (
         <MapView
-          key={mapKey}
           ref={mapRef}
           style={styles.map}
           initialRegion={{
@@ -117,21 +142,12 @@ const GuestMapBox = ({ navigation }) => {
           region={location}
           showsUserLocation={!!location}
         >
-          {coffeeShops.map((shop) => (
-            <Marker
+          {coffeeShops.map((shop, index) => (
+            <AnimatedMarker
               key={shop.id}
-              coordinate={{
-                latitude: shop.latitude,
-                longitude: shop.longitude,
-              }}
-              title={shop.name}
-              description={shop.description}
-              onPress={() =>
-                navigation.navigate('CoffeeProfile', {
-                  shop,
-                  loggedIn: false,
-                })
-              }
+              shop={shop}
+              anim={markerAnims.current[index] || { opacity: new Animated.Value(1), scale: new Animated.Value(1) }}
+              navigation={navigation}
             />
           ))}
           {location && (
@@ -149,6 +165,33 @@ const GuestMapBox = ({ navigation }) => {
     </View>
   );
 };
+
+
+const AnimatedMarker = ({ shop, anim, navigation }) => (
+  <Marker
+    coordinate={{
+      latitude: shop.latitude,
+      longitude: shop.longitude,
+    }}
+    title={shop.name}
+    description={shop.description}
+    onPress={() =>
+      navigation.navigate('CoffeeProfile', {
+        shop,
+        loggedIn: false,
+      })
+    }
+  >
+    <Animated.View style={{
+      opacity: anim.opacity,
+      transform: [{ scale: anim.scale }],
+    }}>
+      <View style={styles.markerContainer}>
+        <Text style={styles.markerText}>{shop.name[0]}</Text>
+      </View>
+    </Animated.View>
+  </Marker>
+);
 
 const styles = StyleSheet.create({
   container: {
@@ -173,6 +216,26 @@ const styles = StyleSheet.create({
     color: 'red',
     padding: 10,
     flex: 1,
+  },
+  loadingText: {
+    fontSize: 16,
+    textAlign: 'center',
+    color: '#333',
+    padding: 10,
+    flex: 1,
+  },
+  markerContainer: {
+    backgroundColor: '#007AFF',
+    borderRadius: 15,
+    width: 30,
+    height: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  markerText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });
 
