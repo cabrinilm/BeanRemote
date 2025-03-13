@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import styles from './styles/LoginScreenStyles';
@@ -11,7 +11,7 @@ import {
   getVisits,
 } from './../../src/services/api';
 import UserAccount from '../../src/context/UserAccount';
-import AnimatedLoader from 'react-native-animated-loader';
+import LoadingScreen from '../LoadingScreen'; 
 
 export default function LoginScreen({ navigation }) {
   const {
@@ -21,8 +21,6 @@ export default function LoginScreen({ navigation }) {
     setError,
     loading,
     setLoading,
-    isErrorPopupOpen,
-    setIsErrorPopupOpen,
     favorites,
     setFavorites,
     preferences,
@@ -32,6 +30,7 @@ export default function LoginScreen({ navigation }) {
     visits,
     setVisits,
   } = useContext(UserAccount);
+  
   const [email, setEmail] = useState('caroladmin@example.com');
   const [password, setPassword] = useState('159753');
 
@@ -39,52 +38,42 @@ export default function LoginScreen({ navigation }) {
     if (email && password) {
       setLoading(true);
       setError(null);
-      const userFromFirebase = await login(email, password);
-      const params = { firebase_uid: userFromFirebase?.user?.uid };
-      console.log('UID: ', params.firebase_uid);
-      console.log('Token: ', userFromFirebase?.idToken);
-      getUserByFirebaseUid(params)
-        .then((userData) => {
-          console.log(userData);
-          setUser(userData);
-          console.log('User: ', user);
-          return Promise.all([
-            getUserFavourites(userData?.id),
-            getUserAmenities(userData?.id),
-            getUserReviews(userData?.id),
-            getVisits({ user_id: userData?.id }),
-          ]);
-        })
-        .then(([userFavourites, userPreferences, userReviews, userVisits]) => {
-          setFavorites(userFavourites);
-          setPreferences(userPreferences);
-          setReviews(userReviews);
-          setVisits(userVisits);
-          setLoading(false);
-          Alert.alert('Success', 'Login successful!', [
-            {
-              text: 'OK',
-              onPress: () => {
-                navigation.navigate('UserHomeScreen', {
-                  loggedIn: true,
-                  username: email,
-                });
-              },
-            },
-          ]);
-        })
-        .catch((err) => {
-          console.error('❌ Login Error:', error.message);
-          setError(
-            `${
-              'Status: ' +
-              err.response.status +
-              ' Message: "' +
-              err.response.data.msg
-            }` || 'An unexpected error occurred in getting the user data'
-          );
-        })
-        .finally(() => setLoading(false));
+      try {
+        const userFromFirebase = await login(email, password);
+        const params = { firebase_uid: userFromFirebase?.user?.uid };
+        
+        
+        const userData = await getUserByFirebaseUid(params);
+        setUser(userData);
+
+        const [
+          userFavourites,
+          userPreferences,
+          userReviews,
+          userVisits,
+        ] = await Promise.all([
+          getUserFavourites(userData?.id),
+          getUserAmenities(userData?.id),
+          getUserReviews(userData?.id),
+          getVisits({ user_id: userData?.id }),
+        ]);
+
+        setFavorites(userFavourites);
+        setPreferences(userPreferences);
+        setReviews(userReviews);
+        setVisits(userVisits);
+
+        
+        navigation.navigate('UserHomeScreen', {
+          loggedIn: true,
+          username: email,
+        });
+      } catch (err) {
+        console.error('❌ Login Error:', err.message);
+        setError('An error occurred while logging in.');
+      } finally {
+        setLoading(false);
+      }
     } else {
       Alert.alert('Error', 'Please fill in all fields');
     }
@@ -95,34 +84,18 @@ export default function LoginScreen({ navigation }) {
   };
 
   if (loading) {
-    return (
-      <AnimatedLoader
-        visible={loading}
-        overlayColor='rgba(255,255,255,0.75)'
-        animationStyle={styles.lottie}
-        speed={1}
-      >
-        <Text>Doing something...</Text>
-      </AnimatedLoader>
-    );
+    return <LoadingScreen />;  
   }
 
   if (error) {
-    Alert.alert('❌ Error', error, [
-      {
-        text: 'OK',
-        onPress: () => {
-          setError(null);
-          setFavorites('');
-          setPreferences('');
-          setReviews('');
-          setVisits('');
-          setLoading(false);
-          setUser(null);
-          navigation.navigate('HomeScreen');
-        },
-      },
-    ]);
+    return (
+      <View style={styles.container}>
+        <Text style={styles.errorText}>{error}</Text>
+        <TouchableOpacity style={styles.button} onPress={handleLogin}>
+          <Text style={styles.buttonText}>Try Again</Text>
+        </TouchableOpacity>
+      </View>
+    );
   }
 
   return (
