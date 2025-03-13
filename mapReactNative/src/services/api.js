@@ -73,7 +73,7 @@ export const getUserById = (user_id, params = {}) => {
 
 export const patchUserById = (user_id, body = {}) => {
   return beanRemoteAPI
-    .post(`/users/${user_id}`, body)
+    .patch(`/users/${user_id}`, body)
     .then((response) => response.data.user)
     .catch((error) => {
       console.error(

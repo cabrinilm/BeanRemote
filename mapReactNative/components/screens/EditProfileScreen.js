@@ -1,20 +1,21 @@
+import * as FileSystem from 'expo-file-system';
 import React, { useContext, useState } from 'react';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import {
   View,
   Text,
   TextInput,
   Image,
   TouchableOpacity,
-  Button,
   FlatList,
-  StyleSheet,
-  ScrollView,
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
-import styles from './styles/ProfileScreenStyles';
+import styles from './styles/EditProfileScreenStyles';
 import UserAccount from '../../src/context/UserAccount';
 import { patchUserById, patchUserAmenities } from '../../src/services/api';
 import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { auth, storage } from './../../src/config/firebase';
 
 const EditProfileScreen = ({ navigation }) => {
   const {
@@ -38,11 +39,51 @@ const EditProfileScreen = ({ navigation }) => {
 
   const [fullName, setFullName] = useState(user?.full_name || '');
   const [avatar, setAvatar] = useState(user?.avatar || '');
-  const [selectedPreferences, setSelectedPreferences] = useState([
-    ...preferences,
-  ]);
+  const [selectedPreferences, setSelectedPreferences] = useState(
+    preferences.map((p) => ({ id: p.id, name: p.name }))
+  );
 
-  // ✅ Pick New Avatar
+  const uploadImageToFirebase = async (uri) => {
+    const user = auth.currentUser; // Get the current user directly
+    if (!user) {
+      console.error('User not authenticated');
+      return null;
+    }
+
+    try {
+      console.log(uri);
+      const response = await fetch(uri);
+      console.log('fetch uri success');
+      const blob = await response.blob();
+      console.log('blob success');
+
+      const userId = user.uid; // Use user.uid instead of firebase_uid
+      console.log('userId:', userId);
+      const storageRef = ref(storage, `avatars/${userId}/profile.jpg`);
+      console.log('storageRef:', storageRef.fullPath);
+      await uploadBytes(storageRef, blob);
+      console.log('uploadBytes success');
+      const downloadUrl = await getDownloadURL(storageRef);
+      console.log('downloadUrl:', downloadUrl);
+      return downloadUrl;
+    } catch (error) {
+      console.error('❌ Error uploading image:', error);
+      console.log('Error code:', error.code);
+      console.log('Error message:', error.message);
+      console.log('Server response:', error.serverResponse);
+      throw error;
+    }
+  };
+
+  // Available preferences list
+  const availablePreferences = [
+    { id: 1, name: 'WiFi' },
+    { id: 2, name: 'Power Outlets' },
+    { id: 3, name: 'Outdoor Seating' },
+    { id: 4, name: 'Pet Friendly' },
+    { id: 5, name: 'Wheelchair Accessible' },
+  ];
+
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       selectionLimit: 1,
@@ -52,11 +93,19 @@ const EditProfileScreen = ({ navigation }) => {
     });
 
     if (!result.canceled && result.assets.length > 0) {
-      setAvatar(result.assets[0].uri);
+      try {
+        // const uploadedUrl = await uploadImageToFirebase(result.assets[0].uri);
+        // if (uploadedUrl) {
+        //   setAvatar(uploadedUrl); // Update UI
+        //   console.log('✅ Image uploaded successfully:', uploadedUrl);
+        // }
+        setAvatar(result.assets[0].uri);
+      } catch (error) {
+        console.error('❌ Image upload failed:', error);
+      }
     }
   };
 
-  // ✅ Toggle Preference Selection
   const togglePreference = (amenity) => {
     const isSelected = selectedPreferences.some((p) => p.id === amenity.id);
     if (isSelected) {
@@ -66,147 +115,119 @@ const EditProfileScreen = ({ navigation }) => {
     }
   };
 
-  // ✅ Save Changes
   const handleSave = async () => {
     try {
-      const updatedUser = await patchUserById(user.id, {
-        full_name: fullName,
-        avatar,
-      });
-      const updatedPreferences = await patchUserAmenities(user.id, {
-        amenities: selectedPreferences.map((p) => p.id),
-      });
+      setLoading(true);
+
+      const userData = {
+        full_name: fullName.trim(),
+        avatar: avatar.trim(),
+      };
+      const updatedUser = await patchUserById(user.id, userData);
+      // const updatedPreferences = await patchUserAmenities(user.id, {
+      //   amenities: selectedPreferences.map((p) => p.id),
+      // });
 
       setUser(updatedUser);
-      setPreferences(updatedPreferences);
+      // setPreferences(updatedPreferences);
+      setPreferences(selectedPreferences);
 
       navigation.goBack();
     } catch (error) {
       console.error('❌ Error updating profile:', error.message);
+    } finally {
+      setLoading(false);
     }
   };
-
-  const availablePreferences = [
-    { name: 'WiFi' },
-    { name: 'Power Outlets' },
-    { name: 'Outdoor Seating' },
-    { name: 'Pet Friendly' },
-    { name: 'Wheelchair Accessible' },
-  ];
 
   return (
     <SafeAreaProvider>
       <SafeAreaView style={styles.container}>
-        <ScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: 20 }}>
-          {/* SECTION: Profile Picture */}
-          <View style={styles.profilePictureContainer}>
-            <Image source={{ uri: avatar }} style={styles.profilePicture} />
-            <TouchableOpacity style={styles.editButton} onPress={pickImage}>
-              <Text style={styles.editButtonText}>Change Avatar</Text>
-            </TouchableOpacity>
-          </View>
-
-          {/* SECTION: Full Name */}
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>Full Name</Text>
-            <TextInput
-              style={styles.input}
-              value={fullName}
-              onChangeText={setFullName}
-            />
-          </View>
-
-          {/* SECTION: Preferences */}
-          <View style={styles.sectionContainer}>
-            <Text style={styles.sectionTitle}>Preferences</Text>
-            {preferences.length > 0 ? (
-              <FlatList
-                data={preferences}
-                keyExtractor={(item) => item.id.toString()}
-                nestedScrollEnabled={true}
-                renderItem={({ item }) => (
-                  <TouchableOpacity
-                    style={[
-                      styles.preferenceItem,
-                      selectedPreferences.some((p) => p.id === item.id)
-                        ? styles.preferenceSelected
-                        : null,
-                    ]}
-                    onPress={() => togglePreference(item)}
-                  >
-                    <Text style={styles.preferenceText}>{item.name}</Text>
-                  </TouchableOpacity>
-                )}
+        {/* ✅ Profile Info Section */}
+        <View style={styles.userInfoContainer}>
+          <View style={styles.header}>
+            <View style={styles.profilePictureContainer}>
+              <Image
+                source={{
+                  uri:
+                    avatar ||
+                    'https://avatars.githubusercontent.com/u/17879520?v=4',
+                }}
+                style={styles.profilePicture}
               />
-            ) : (
-              <Text style={styles.noDataText}>No preferences available.</Text>
-            )}
+            </View>
+
+            <View style={styles.userInfo}>
+              <Text style={styles.username}>{fullName}</Text>
+            </View>
           </View>
 
-          {/* SECTION: Save & Cancel */}
-          <View style={styles.buttonContainer}>
-            <Button title='Save Changes' onPress={handleSave} />
-            <Button
-              title='Cancel'
-              color='red'
-              onPress={() => navigation.goBack()}
-            />
+          {/* Badge Display */}
+          <View style={styles.bioContainer}>
+            <MaterialCommunityIcons name='security' size={24} color='black' />
+            <Text style={styles.badgeText}>
+              {user?.badges?.length > 0 ? user.badges.join(', ') : 'Newbie'}
+            </Text>
           </View>
-        </ScrollView>
+
+          {/* Change Avatar Button */}
+          <TouchableOpacity style={styles.editButton} onPress={pickImage}>
+            <Text style={styles.editButtonText}>Change Avatar</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* ✅ Full Name Input */}
+        <View style={styles.inputContainer}>
+          <Text style={styles.label}>Full Name</Text>
+          <TextInput
+            placeholder='Full name'
+            style={styles.input}
+            value={fullName}
+            onChangeText={setFullName}
+            autoCapitalize='words'
+          />
+        </View>
+
+        {/* ✅ Preferences Selection */}
+        <View style={styles.sectionContainer}>
+          <Text style={styles.sectionTitle}>Preferences</Text>
+          <FlatList
+            data={availablePreferences}
+            keyExtractor={(item) => item.id.toString()}
+            renderItem={({ item }) => {
+              const isSelected = selectedPreferences.some(
+                (p) => p.id === item.id
+              );
+              return (
+                <TouchableOpacity
+                  style={[
+                    styles.preferenceItem,
+                    isSelected ? styles.preferenceSelected : null,
+                  ]}
+                  onPress={() => togglePreference(item)}
+                >
+                  <Text style={styles.preferenceText}>{item.name}</Text>
+                </TouchableOpacity>
+              );
+            }}
+          />
+        </View>
+
+        {/* ✅ Save & Cancel Buttons */}
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
+            <Text style={styles.saveButtonText}>Save Changes</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.cancelButton}
+            onPress={() => navigation.goBack()}
+          >
+            <Text style={styles.cancelButtonText}>Cancel</Text>
+          </TouchableOpacity>
+        </View>
       </SafeAreaView>
     </SafeAreaProvider>
   );
 };
-
-const modalStyles = StyleSheet.create({
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.5)',
-  },
-  modalContent: {
-    width: '80%',
-    backgroundColor: 'white',
-    padding: 20,
-    borderRadius: 10,
-    alignItems: 'center',
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 10,
-  },
-  label: {
-    alignSelf: 'flex-start',
-    fontSize: 14,
-    marginTop: 10,
-  },
-  input: {
-    width: '100%',
-    borderWidth: 1,
-    borderColor: 'gray',
-    borderRadius: 5,
-    padding: 8,
-    marginTop: 5,
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '100%',
-    marginTop: 15,
-  },
-  postImage: {
-    width: 100,
-    height: 100,
-    margin: 5,
-    borderRadius: 5,
-  },
-  postsGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'center',
-  },
-});
 
 export default EditProfileScreen;

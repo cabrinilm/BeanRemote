@@ -6,9 +6,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     padding: 15,
   },
-  profileContainer: {
+  userInfoContainer: {
     alignItems: 'center',
-    marginBottom: 20,
+    paddingBottom: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ddd',
+  },
+  profilePictureContainer: {
+    marginBottom: 10,
   },
   profilePicture: {
     width: 100,
@@ -17,59 +22,99 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#ddd',
   },
-  editAvatarText: {
-    color: 'blue',
-    marginTop: 5,
+  username: {
+    fontSize: 22,
+    fontWeight: 'bold',
+  },
+  bioContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 10,
+  },
+  badgeText: {
+    fontSize: 16,
+    marginLeft: 8,
+    color: '#555',
+  },
+  editButton: {
+    marginTop: 15,
+    padding: 10,
+    backgroundColor: '#007bff',
+    borderRadius: 5,
+    width: '100%',
+    alignItems: 'center',
+  },
+  editButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+  inputContainer: {
+    marginTop: 20,
   },
   label: {
     fontSize: 16,
     fontWeight: 'bold',
-    marginTop: 10,
   },
   input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 5,
-    padding: 10,
     fontSize: 16,
+    borderWidth: 1,
+    borderColor: '#ddd',
+    padding: 10,
+    borderRadius: 5,
     marginTop: 5,
+  },
+  sectionContainer: {
+    marginTop: 20,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
   },
   preferenceItem: {
     padding: 10,
-    marginVertical: 5,
-    borderWidth: 1,
-    borderColor: '#ccc',
     borderRadius: 5,
-  },
-  selectedPreference: {
-    backgroundColor: '#d3f8d3',
-    borderColor: '#6cbb6c',
-  },
-  inputContainer: {
-    paddingHorizontal: 15,
-    marginBottom: 15,
-  },
-  label: {
-    fontSize: 14,
-    color: '#555',
-    marginBottom: 5,
-  },
-  input: {
     borderWidth: 1,
     borderColor: '#ddd',
-    borderRadius: 5,
-    padding: 10,
-    fontSize: 16,
-    backgroundColor: '#fff',
+    marginBottom: 5,
   },
   preferenceSelected: {
-    backgroundColor: '#ddd',
-    borderRadius: 8,
+    backgroundColor: '#007bff',
+    borderColor: '#0056b3',
+  },
+  preferenceText: {
+    color: '#000',
+    fontSize: 16,
   },
   buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
     marginTop: 20,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  saveButton: {
+    backgroundColor: '#007bff',
+    padding: 10,
+    borderRadius: 5,
+    width: '50%',
+    alignItems: 'center',
+  },
+  saveButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  cancelButton: {
+    backgroundColor: '#fff',
+    padding: 10,
+    fontWeight: 'bold',
+    width: '50%',
+    alignItems: 'center',
+  },
+  cancelButtonText: {
+    color: '#007bff',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });
 

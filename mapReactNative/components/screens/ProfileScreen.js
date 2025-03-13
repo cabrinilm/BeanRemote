@@ -3,7 +3,6 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
 import { View, Text, Image, TouchableOpacity, ScrollView } from 'react-native';
-import * as ImagePicker from 'expo-image-picker';
 import styles from './styles/ProfileScreenStyles';
 import UserAccount from '../../src/context/UserAccount';
 
